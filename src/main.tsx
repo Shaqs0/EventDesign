@@ -2,13 +2,39 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { AuthPage } from './pages';
+import { Layout } from './layout/Layout';
+import { SettingsPage, SignPage } from './pages';
+import { EventsPage } from './pages/EventsPage';
+import { FavoritesPage } from './pages/FavoritesPage';
+import { ReportsPage } from './pages/ReportsPage';
 
 
 const router = createBrowserRouter ([
 	{
 		path: '/',
-		element: <AuthPage/>
+		element: <Layout/>,
+		children: [
+			{
+				path: '/',
+				element: <SignPage/>
+			},
+			{
+				path: '/events',
+				element: <EventsPage/>
+			},
+			{
+				path: '/favorites',
+				element: <FavoritesPage/>
+			},
+			{
+				path: '/reports',
+				element: <ReportsPage/>
+			},
+			{
+				path: '/settings',
+				element: <SettingsPage/>
+			}
+		]
 	}
 ]);
 

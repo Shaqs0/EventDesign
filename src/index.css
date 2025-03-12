@@ -28,3 +28,7 @@
 body {
   min-height: 100vh;
 }
+
+.link-text {
+  @apply relative after:absolute after:bottom-[-5px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff];
+}

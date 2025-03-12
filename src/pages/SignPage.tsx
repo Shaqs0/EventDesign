@@ -1,4 +1,4 @@
-export function AuthPage () {
+export function SignPage () {
 	return (
 		<div>
 			AuthPage
