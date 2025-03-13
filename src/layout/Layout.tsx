@@ -13,7 +13,7 @@ export function Layout () {
 				</div>
 				<div className="flex items-center">
 					<ul className="mr-9 hidden cursor-pointer gap-9 text-sm font-semibold md:flex lg:gap-16">
-						<Link to="/events" className={location.pathname === '/events' ? 'link-text' : ''}>
+						<Link to="/" className={location.pathname === '/' ? 'link-text' : ''}>
 							Мероприятия
 						</Link>
 						<Link to="/favorites" className={location.pathname === '/favorites' ? 'link-text' : ''}>

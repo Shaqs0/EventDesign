@@ -16,10 +16,6 @@ const router = createBrowserRouter ([
 		children: [
 			{
 				path: '/',
-				element: <SignPage/>
-			},
-			{
-				path: '/events',
 				element: <EventsPage/>
 			},
 			{
@@ -35,7 +31,11 @@ const router = createBrowserRouter ([
 				element: <SettingsPage/>
 			}
 		]
-	}
+	},
+	{
+		path: '/sign',
+		element: <SignPage/>
+	},
 ]);
 
 createRoot(document.getElementById('root')!).render(
