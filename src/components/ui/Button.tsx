@@ -1,7 +1,9 @@
 import { ButtonHTMLAttributes } from 'react';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  title: string;
   appearance?: 'smallButton' | 'bigButton';
+  onClick: () => void;
 }
 
 export function Button({
@@ -9,29 +11,16 @@ export function Button({
 	appearance,
 	onClick,
 }: ButtonProps) {
-	if (appearance === 'bigButton') {
-		return (
-			<button
-				type="submit"
-				className="w-full rounded-lg bg-primary-blue py-2 font-bold text-[white] hover:bg-[gray-800]"
-			>
-				{title}
-			</button>
-		);
-	}
-
 	return (
 		<button
-			className={`${
-				appearance === 'smallButton'
-					? 'flex h-[42px] w-[135px] items-center justify-center rounded-md bg-primary-blue'
-					: ''
-			}`}
 			onClick={onClick}
+			className={`cursor-pointer transition-colors duration-200 ${
+				appearance === 'bigButton'
+					? 'w-full rounded-lg bg-primary-blue py-2 font-bold text-[white] hover:bg-[gray-800]'
+					: 'flex h-[42px] w-[135px] items-center justify-center rounded-md bg-primary-blue'
+			}`}
 		>
-			<p className=''>
-				{title}
-			</p>
+			<p className="font-semibold text-[white]">{title}</p>
 		</button>
 	);
 }
