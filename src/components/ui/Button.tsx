@@ -13,7 +13,7 @@ export function Button({
 		return (
 			<button
 				type="submit"
-				className="mt-16 h-[53px] w-full rounded-[4px] bg-[black] py-2 font-bold text-[white] hover:bg-[gray-800]"
+				className="w-full rounded-lg bg-primary-blue py-2 font-bold text-[white] hover:bg-[gray-800]"
 			>
 				{title}
 			</button>

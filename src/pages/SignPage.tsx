@@ -20,7 +20,7 @@ export function SignPage() {
 				</div>
 				<div className="mt-16 flex justify-center space-x-4 rounded-lg bg-[#272727]">
 					<button
-						className={`m-1 w-1/2 rounded-lg px-5 py-2 ${isSignIn ? 'bg-[#0A0A0A]' : 'bg-[gray-100]'}`}
+						className={`m-1 w-1/2 rounded-lg px-5 py-2  ${isSignIn ? 'bg-[#0A0A0A]' : 'bg-[gray-100]'}`}
 						onClick={() => setIsSignIn(true)}
 					>
             Войти
