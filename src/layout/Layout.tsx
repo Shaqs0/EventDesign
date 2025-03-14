@@ -28,11 +28,11 @@ export function Layout () {
 					</ul>
 				</div>
 			</header>
-			<main className='mt-10 flex'>
+			<main className='mt-10 grow'>
 				<Outlet/>
 			</main>
-			<footer>
-                
+			{/* <footer className='mt-10 flex items-start border-t border-[#D8D8D8] py-4'> */}
+			<footer> 
 			</footer>
 		</div>
 	);

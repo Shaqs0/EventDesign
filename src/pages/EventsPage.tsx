@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CalendarIcon, LocationIcon, PlusIcon } from '../assets';
+import { CalendarIcon, LocationIcon, PlusIcon, StarNFill } from '../assets';
 import { Button, CardButton } from '../components';
 
 export function EventsPage() {
@@ -7,6 +7,8 @@ export function EventsPage() {
 		{ id: 1, name: 'Выставка', title: 'Искусство XXI века', date: '31.12.2025', category: 'Культура', location: 'Москва, Арт-центр', description: '', active: false },
 		{ id: 2, name: 'Концерт', title: 'Рок-фестиваль', date: '15.08.2025', category: 'Музыка', location: 'Санкт-Петербург, СК Юбилейный', description: '', active: false },
 		{ id: 3, name: 'Лекция', title: 'Будущее технологий', date: '10.09.2025', category: 'Наука', location: 'Казань, Технопарк', description: '', active: false },
+		{ id: 4, name: 'Лекция', title: 'Будущее технологий', date: '10.09.2025', category: 'Наука', location: 'Казань, Технопарк', description: '', active: false },
+		{ id: 5, name: 'Лекция', title: 'Будущее технологий', date: '10.09.2025', category: 'Наука', location: 'Казань, Технопарк', description: '', active: false },
 	]);
 
 	const handleCardClick = (id: number) => {
@@ -30,7 +32,7 @@ export function EventsPage() {
 
 	return (
 		<div className="flex min-h-[80vh] w-full">
-			<aside className="mt-20 w-96 min-w-96 shrink-0 pl-2 pr-1">
+			<aside className="mt-20 h-[650px] w-96 min-w-96 shrink-0 overflow-y-scroll pl-2 pr-1">
 
 				<button className="flex h-[57px] w-full items-center justify-center gap-3 bg-[white] bg-opacity-[3%] p-[10px]">
 					<img src={PlusIcon} alt="Добавить событие" />
@@ -54,7 +56,11 @@ export function EventsPage() {
 			<section className="mt-20 flex w-full flex-col items-center justify-start gap-5 ">
 				{activeEvent ? (
 					<>
-						<h1 className='text-[32px] font-semibold'>{activeEvent.title}</h1>
+						<div className='flex w-[88%] items-center justify-between'>
+							<h1 className='grow text-center text-[32px] font-semibold'>{activeEvent.title}</h1>
+							<img src={StarNFill} className='ml-auto'/>
+						</div>
+
 						<div className='flex w-full items-center justify-start p-10 px-20'>
 							<div className="w-full justify-start rounded-lg p-4">
 								<div className="flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
@@ -80,7 +86,6 @@ export function EventsPage() {
 								<Button
 									appearance='smallButton'
 									title='Сохранить'
-									className='mt-5'
 								/>
 							</div>
 							
