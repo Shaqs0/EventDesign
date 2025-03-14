@@ -29,8 +29,9 @@ export function EventsPage() {
 	const activeEvent = events.find(event => event.active);
 
 	return (
-		<main className="flex h-screen w-full">
-			<aside className="w-96 bg-[gray-100] p-4">
+		<div className="flex min-h-[80vh] w-full">
+			<aside className="mt-20 w-96 min-w-96 shrink-0 pl-2 pr-1">
+
 				<button className="flex h-[57px] w-full items-center justify-center gap-3 bg-[white] bg-opacity-[3%] p-[10px]">
 					<img src={PlusIcon} alt="Добавить событие" />
 					<p className="font-semibold">Новое мероприятие</p>
@@ -50,11 +51,11 @@ export function EventsPage() {
 				</div>
 			</aside>
 
-			<section className="flex size-full flex-col items-center justify-start gap-5 p-10">
+			<section className="mt-20 flex w-full flex-col items-center justify-start gap-5 ">
 				{activeEvent ? (
 					<>
 						<h1 className='text-[32px] font-semibold'>{activeEvent.title}</h1>
-						<div className='flex w-full items-center justify-start px-20'>
+						<div className='flex w-full items-center justify-start p-10 px-20'>
 							<div className="w-full justify-start rounded-lg p-4">
 								<div className="flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
 									<img src={CalendarIcon} className='size-[18px]' alt="Дата"/>
@@ -68,12 +69,13 @@ export function EventsPage() {
 								</div>
 								<div className="mt-10">
 									<textarea 
-										className="mt-2 h-[30vh] w-full rounded-lg bg-primary-grey p-2 text-[white] outline-none focus:border-none"
+										className="mt-2 h-[30vh] w-full resize-none rounded-lg bg-primary-grey p-2 text-[white] outline-none focus:border-none"
 										rows={4}
 										placeholder="Добавьте описание события..."
 										value={activeEvent.description}
 										onChange={(e) => handleDescriptionChange(activeEvent.id, e.target.value)}
 									/>
+
 								</div>
 								<Button
 									appearance='smallButton'
@@ -90,6 +92,6 @@ export function EventsPage() {
 					<p className='font-semibold text-[gray-500]'>Выберите мероприятие для просмотра деталей.</p>
 				)}
 			</section>
-		</main>
+		</div>
 	);
 }

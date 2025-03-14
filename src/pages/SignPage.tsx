@@ -36,7 +36,7 @@ export function SignPage() {
 					<div className="relative">
 						<input
 							type="text"
-							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-[#181818] p-2 focus:outline-none focus:ring-0"
+							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
 							{...register('name', { required: 'Name is required' })}
 							placeholder="Имя"
 						/>
@@ -47,7 +47,7 @@ export function SignPage() {
 							<div className="relative">
 								<input
 									type="text"
-									className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-[#181818] p-2 focus:outline-none focus:ring-0"
+									className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
 									{...register('login', { required: 'Login is required' })}
 									placeholder="Логин"
 								/>
@@ -56,7 +56,7 @@ export function SignPage() {
 							<div className="relative">
 								<input
 									type="email"
-									className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-[#181818] p-2 focus:outline-none focus:ring-0"
+									className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
 									{...register('email', { required: 'Email is required' })}
 									placeholder="Email"
 									autoComplete="username"
@@ -68,7 +68,7 @@ export function SignPage() {
 					<div className="relative">
 						<input
 							type="password"
-							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-[#181818] p-2 focus:outline-none focus:ring-0"
+							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
 							{...register('password', {
 								required: 'Password is required',
 								minLength: {
