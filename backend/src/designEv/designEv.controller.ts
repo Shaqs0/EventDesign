@@ -1,13 +1,16 @@
 import { Router, Request, Response } from 'express';
 import { designEvService } from './designEv.service';
 import { authMiddleware } from '../auth.middleware';
+import { createDesignEvDto } from './designEv.dto';
 
 const router = Router();
 const eventsService = new designEvService();
 
 router.post('/', authMiddleware, (req: Request, res: Response) => {
-    if (!req.body?.text?.length) {
-        res.status(400).json({ message: 'Text is required' });
+    const validation = createDesignEvDto.safeParse(req.body)
+
+    if (!validation.success) {
+        res.status(400).json({ message: validation.error.errors });
         return;
     }
     const event = eventsService.createEvent(req.body);

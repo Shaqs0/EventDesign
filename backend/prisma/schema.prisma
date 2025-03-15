@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Events {
+  event_id     Int      @id @default(autoincrement())
+  event_name   String   @db.VarChar(45)
+  category     String?  @db.VarChar(45)
+  event_date   DateTime? 
+  location     String?  @db.VarChar(45)
+  description  String?  @db.VarChar(45)
+  title        String   @default("Без названия") @db.VarChar(512)
+  favorite     Int?     
+
+  Categories   Categories? @relation("EventsToCategories", fields: [category], references: [category_name])
+
+  @@index([category], name: "event_cat_idx")
+  @@index([favorite], name: "event_fav_idx")
+
+  @@map("EventDesign.Events")
+}
+
+model Categories {
+  category_name String   @id @db.VarChar(45)
+  description   String?  @db.VarChar(45)
+  events        Events[] @relation("EventsToCategories")
+
+  @@map("categories")
+}
