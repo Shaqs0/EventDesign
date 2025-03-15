@@ -86,6 +86,7 @@ export function EventsPage() {
 								<Button
 									appearance='smallButton'
 									title='Сохранить'
+									
 								/>
 							</div>
 							

@@ -3,7 +3,7 @@ import { ButtonHTMLAttributes } from 'react';
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   title: string;
   appearance?: 'smallButton' | 'bigButton';
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export function Button({
