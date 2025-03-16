@@ -1,6 +1,7 @@
 import express, { NextFunction, Request, Response, ErrorRequestHandler } from "express";
 import { designEvRouter } from "./src/designEv/designEv.controller";
 import dotenv from "dotenv";
+import { authRouter } from './src/auth/auth.controller';
 
 dotenv.config();
 
@@ -19,7 +20,10 @@ async function main() {
   };
   app.use(jsonErrorHandler);
 
+  app.use('/api/auth', authRouter);  
+
   app.use("/api/events", designEvRouter);
+
 
   app.all("*", (req: Request, res: Response) => {
     res.status(404).json({ message: "Not Found" });
@@ -37,3 +41,4 @@ async function main() {
 }
 
 main();
+

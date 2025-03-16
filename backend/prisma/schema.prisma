@@ -12,9 +12,11 @@ model User {
   user_name  String
   login      String    @unique
   password   String
-  emaill     String
+  email      String    @unique 
   Favorites  Favorite[]
 }
+
+
 
 model Event {
   event_id    Int       @id @default(autoincrement())
