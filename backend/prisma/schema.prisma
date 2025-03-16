@@ -7,28 +7,45 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Events {
-  event_id     Int      @id @default(autoincrement())
-  event_name   String   @db.VarChar(45)
-  category     String?  @db.VarChar(45)
-  event_date   DateTime? 
-  location     String?  @db.VarChar(45)
-  description  String?  @db.VarChar(45)
-  title        String   @default("Без названия") @db.VarChar(512)
-  favorite     Int?     
-
-  Categories   Categories? @relation("EventsToCategories", fields: [category], references: [category_name])
-
-  @@index([category], name: "event_cat_idx")
-  @@index([favorite], name: "event_fav_idx")
-
-  @@map("EventDesign.Events")
+model User {
+  user_id    Int       @id @default(autoincrement())
+  user_name  String
+  login      String    @unique
+  password   String
+  emaill     String
+  Favorites  Favorite[]
 }
 
-model Categories {
-  category_name String   @id @db.VarChar(45)
-  description   String?  @db.VarChar(45)
-  events        Events[] @relation("EventsToCategories")
+model Event {
+  event_id    Int       @id @default(autoincrement())
+  event_name  String
+  category_name String?
+  category Category? @relation(fields: [category_name], references: [category_name])
 
-  @@map("categories")
+  event_date  DateTime?
+  location    String?
+  description String?
+  title       String    @default("Без названия")
+  favorite    Int?
+  Favorites   Favorite[]
+}
+
+
+model Category {
+  category_name String  @id
+  description   String?
+  Events        Event[]
+}
+
+
+model Favorite {
+  favorite_id Int   @id @default(autoincrement())
+  user_id     Int
+  event_id    Int
+
+  User  User  @relation(fields: [user_id], references: [user_id])
+  Event Event @relation(fields: [event_id], references: [event_id])
+
+  @@index([user_id])
+  @@index([event_id])
 }

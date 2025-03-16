@@ -1,28 +1,39 @@
-import express, { NextFunction, Request, Response } from 'express'
-import { designEvRouter } from './src/designEv/designEv.controller'
-import dotenv from 'dotenv'
+import express, { NextFunction, Request, Response, ErrorRequestHandler } from "express";
+import { designEvRouter } from "./src/designEv/designEv.controller";
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
+const app = express();
 
 async function main() {
-    app.use(express.json())
-    
-    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-        console.error(err.stack);
-        res.status(500).send('Что-то пошло не так...')
-    })
+  app.use(express.json());
 
-    app.use('/api/events', designEvRouter)
+  const jsonErrorHandler: ErrorRequestHandler = (err, req, res, next): void => {
+    if (err instanceof SyntaxError && "body" in err) {
+      console.error("Invalid JSON payload:", err.message);
+      res.status(400).json({ message: "Invalid JSON payload" });
+      return;
+    }
+    next(err); 
+  };
+  app.use(jsonErrorHandler);
 
-    app.all('*', (req: Request, res: Response) => {
-        res.status(404).json({ message: 'Not Found' })
-    })
+  app.use("/api/events", designEvRouter);
 
-    app.listen(process.env.PORT || 4200, () => {
-        console.log('Server is running on port 4200')
-    })
+  app.all("*", (req: Request, res: Response) => {
+    res.status(404).json({ message: "Not Found" });
+  });
+
+  app.use((err: Error, req: Request, res: Response, next: NextFunction): void => {
+    console.error(err.stack);
+    res.status(500).send("Что-то пошло не так...");
+  });
+
+  const port = process.env.PORT || 4200;
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 }
 
-main()
+main();
