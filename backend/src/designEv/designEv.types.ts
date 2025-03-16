@@ -6,5 +6,5 @@ export type designEv = {
   description?: string;
   note?: string;
   title?: string;
-  favorite?: boolean; // Add this if it's part of the frontend payload
+  favorite?: boolean; 
 };
