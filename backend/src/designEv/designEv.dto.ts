@@ -8,7 +8,7 @@ export const createDesignEvDto = z.object({
     z.string().optional()  
   ),
   location: z.string().max(255).optional(),
-  description: z.string().max(512).optional(),
+  description: z.string().max(1024).optional(),
   note: z.string().max(255).optional(),
   title: z.string().max(45).optional().default("Без названия"),
   favorite: z.boolean().optional(),

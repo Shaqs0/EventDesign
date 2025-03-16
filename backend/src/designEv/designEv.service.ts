@@ -7,13 +7,18 @@ export class designEvService {
   async createEvent(event: designEv) {
     let categoryName = event.category || null;
 
+    let category;
     if (categoryName) {
-      const categoryExists = await prisma.category.findUnique({
+      category = await prisma.category.findUnique({
         where: { category_name: categoryName },
       });
 
-      if (!categoryExists) {
-        categoryName = null;
+      if (!category) {
+        category = await prisma.category.create({
+          data: {
+            category_name: categoryName,
+          },
+        });
       }
     }
 
@@ -24,8 +29,8 @@ export class designEvService {
         event_date: event.event_date ? new Date(event.event_date).toISOString() : null,
         location: event.location || null,
         description: event.description || null,
-        category_name: categoryName,
-        favorite: event.favorite ? 1 : null,
+        category_name: category ? category.category_name : null, 
+        favorite: event.favorite === true ? 1 : 0, 
       },
     });
   }
@@ -33,7 +38,7 @@ export class designEvService {
   async getAllEvents() {
     return await prisma.event.findMany({
       include: {
-        category: true,
+        category: true, 
       },
     });
   }

@@ -26,11 +26,12 @@ model Event {
 
   event_date  DateTime?
   location    String?
-  description String?
+  description String?   @db.VarChar(1024)
   title       String    @default("Без названия")
   favorite    Int?
   Favorites   Favorite[]
 }
+
 
 
 model Category {
