@@ -7,18 +7,13 @@ export class designEvService {
   async createEvent(event: designEv) {
     let categoryName = event.category || null;
 
-    let category;
     if (categoryName) {
-      category = await prisma.category.findUnique({
+      const categoryExists = await prisma.category.findUnique({
         where: { category_name: categoryName },
       });
 
-      if (!category) {
-        category = await prisma.category.create({
-          data: {
-            category_name: categoryName,
-          },
-        });
+      if (!categoryExists) {
+        categoryName = null;
       }
     }
 
@@ -29,16 +24,58 @@ export class designEvService {
         event_date: event.event_date ? new Date(event.event_date).toISOString() : null,
         location: event.location || null,
         description: event.description || null,
-        category_name: category ? category.category_name : null, 
-        favorite: event.favorite === true ? 1 : 0, 
+        category_name: categoryName,
+        favorite: event.favorite ? 1 : null,
       },
     });
+  }
+
+  async updateEvent(id: number, eventData: designEv) {
+    let categoryName = eventData.category || null;
+
+    if (categoryName) {
+      const categoryExists = await prisma.category.findUnique({
+        where: { category_name: categoryName },
+      });
+
+      if (!categoryExists) {
+        categoryName = null;
+      }
+    }
+
+    try {
+      return await prisma.event.update({
+        where: { event_id: id },
+        data: {
+          event_name: eventData.event_name,
+          title: eventData.title || 'Без названия',
+          event_date: eventData.event_date ? new Date(eventData.event_date).toISOString() : null,
+          location: eventData.location || null,
+          description: eventData.description || null,
+          category_name: categoryName,
+          favorite: eventData.favorite ? 1 : null,
+        },
+      });
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async deleteEvent(id: number) {
+    try {
+      const deletedEvent = await prisma.event.delete({
+        where: { event_id: id },
+      });
+      return deletedEvent;
+    } catch (error) {
+      return null;
+    }
   }
 
   async getAllEvents() {
     return await prisma.event.findMany({
       include: {
-        category: true, 
+        category: true,
       },
     });
   }
