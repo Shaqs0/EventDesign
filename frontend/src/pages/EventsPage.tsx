@@ -1,36 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CalendarIcon, LocationIcon, PlusIcon, StarNFill } from '../assets';
 import { Button, CardButton } from '../components';
 import { AddEventModal } from '../components/shared/addEventModal';
+import { Event } from '../interfaces/event.interface';
+import { fetchEvents } from '../api/events';
 
 export function EventsPage() {
-	const [events, setEvents] = useState([
-		{ id: 1, name: 'Выставка', title: 'Искусство XXI века', date: '31.12.2025', category: 'Культура', location: 'Москва, Арт-центр', description: '', active: false },
-		{ id: 2, name: 'Концерт', title: 'Рок-фестиваль', date: '15.08.2025', category: 'Музыка', location: 'Санкт-Петербург, СК Юбилейный', description: '', active: false },
-		{ id: 3, name: 'Лекция', title: 'Будущее технологий', date: '10.09.2025', category: 'Наука', location: 'Казань, Технопарк', description: '', active: false },
-		{ id: 4, name: 'Лекция', title: 'Будущее технологий', date: '10.09.2025', category: 'Наука', location: 'Казань, Технопарк', description: '', active: false },
-		{ id: 5, name: 'Лекция', title: 'Будущее технологий', date: '10.09.2025', category: 'Наука', location: 'Казань, Технопарк', description: '', active: false },
-	]);
-
+	const [events, setEvents] = useState<Event[]>([]);
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [activeEventId, setActiveEventId] = useState<number | null>(null);
 
-	const handleCardClick = (id: number) => {
-		setEvents(prevEvents =>
-			prevEvents.map(event => ({
+	useEffect(() => {
+		const loadEvents = async () => {
+			const fetchedEvents = await fetchEvents();
+			const formattedEvents = fetchedEvents.map(event => ({
 				...event,
-				active: event.id === id
-			}))
-		);
+				category: event.category_name ? { category_name: event.category_name } : { category_name: '' },
+			}));
+			setEvents(formattedEvents);
+		};
+
+		loadEvents();
+	}, []);
+
+	const handleCardClick = (eventId: number) => {
+		setActiveEventId(eventId);
 	};
 
+	const activeEvent = events.find(event => event.event_id === activeEventId);
 
-	const handleAddEvent = (newEvent: { name: string; title: string; date: string; location: string; description: string; category: string }) => {
-		const newEventWithId = { ...newEvent, id: events.length + 1, active: false };
+	const handleAddEvent = (newEvent: { event_name: string; title: string; date: string; location: string; description: string; category: string }) => {
+		const newEventWithId: Event = {
+			...newEvent,
+			id: events.length + 1,
+			active: false,
+			favorite: false,
+			category: { category_name: newEvent.category },
+			category_name: undefined,
+			event_id: 0
+		};
+
 		setEvents(prevEvents => [...prevEvents, newEventWithId]);
 	};
-  
-
-	const activeEvent = events.find(event => event.active);
 
 	return (
 		<div className="flex min-h-[80vh] w-full">
@@ -43,21 +54,21 @@ export function EventsPage() {
 					<p className="font-semibold">Новое мероприятие</p>
 				</button>
 				<div className="mt-14 flex flex-col gap-5">
-					{events.map(event => (
+					{events.map((event, index) => (
 						<CardButton
-							key={event.id}
-							name={event.name}
+							key={event.event_id ?? index}
+							name={event.event_name}
 							title={event.title}
 							date={event.date}
-							category={event.category}
-							active={event.active}
-							onClick={() => handleCardClick(event.id)}
+							category={event.category_name ?? ''}
+							active={event.event_id === activeEventId}
+							onClick={() => handleCardClick(event.event_id)}
 						/>
 					))}
 				</div>
 			</aside>
 
-			<section className="mt-20 flex w-full flex-col items-center justify-start gap-5 ">
+			<section className="mt-20 flex w-full flex-col items-center justify-start gap-5">
 				{activeEvent ? (
 					<>
 						<div className="flex w-[88%] items-center justify-between">

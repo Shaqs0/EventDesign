@@ -1,18 +1,23 @@
 import { useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import { createEvent } from '../../api/createEvents';
 import { Event } from '../../interfaces/event.interface';
 
 export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave: (event: Event) => void }) {
-	const { control, handleSubmit, formState: { errors } } = useForm();
+	const { control, handleSubmit, formState: { errors } } = useForm<Event>();
 	const [category, setCategory] = useState('');
 	const [isFavorite, setIsFavorite] = useState(false);
 
-	const onSubmit = async (data: Event) => {
+	const onSubmit: SubmitHandler<Event> = async (data) => {
 		try {
-			await createEvent({ ...data, favorite: isFavorite });
-			onSave({ ...data, favorite: isFavorite });
+			const eventData = {
+				...data,
+				description: data.description || '', 
+				favorite: isFavorite,
+			};
+			await createEvent(eventData);
+			onSave(eventData); 
 			onClose();
 		} catch (error) {
 			console.error('Ошибка при создании мероприятия:', error);
@@ -40,7 +45,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 									/>
 								)}
 							/>
-							{errors.name && <p className="mt-1 text-sm text-[red-500]">{String(errors.name.message)}</p>}
+							{errors.event_name && <p className="mt-1 text-sm text-[red-500]">{String(errors.event_name.message)}</p>}
 						</div>
 
 						<div className="mb-4">
@@ -134,14 +139,14 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 									onClick={() => setIsFavorite(true)}
 									className={`mr-2 rounded px-4 py-2 ${isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'} text-[white]`}
 								>
-									Да
+                  Да
 								</button>
 								<button
 									type="button"
 									onClick={() => setIsFavorite(false)}
 									className={`rounded px-4 py-2 ${!isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'} text-[white]`}
 								>
-									Нет
+                  Нет
 								</button>
 							</div>
 						</div>
@@ -157,7 +162,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 								onClick={onClose}
 								className="rounded bg-[gray-500] px-4 py-2 text-[white] hover:bg-[gray-600]"
 							>
-								Закрыть
+                Закрыть
 							</button>
 						</div>
 					</form>

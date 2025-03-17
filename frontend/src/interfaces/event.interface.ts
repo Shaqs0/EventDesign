@@ -1,10 +1,13 @@
 export interface Event {
-    event_name: string;
-    category?: string;
-    event_date?: string;
-    location?: string;
-    description?: string;
-    note?: string;
-    title?: string;
-    favorite?: boolean; 
+  category_name: any;
+  event_id: number;
+  id: number;
+  event_name: string;
+  title: string;
+  date: string;
+  location: string;
+  description?: string;
+  category: { category_name: string }; 
+  active: boolean;
+  favorite: boolean;
 }

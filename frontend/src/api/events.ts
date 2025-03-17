@@ -5,7 +5,7 @@ import { Event } from '../interfaces/event.interface';
 export async function fetchEvents(): Promise<Event[]> {
 	try {
 		const response = await axios.get(
-			`${PREFIX}api/events`
+			`${PREFIX}events`
 		);
 		console.log('Server response:', response.data);
 
