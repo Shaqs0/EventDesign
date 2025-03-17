@@ -13,3 +13,7 @@ export const createDesignEvDto = z.object({
   title: z.string().max(45).optional().default("Без названия"),
   favorite: z.boolean().optional(),
 });
+
+export const createCategoryDto = z.object({
+  name: z.string().min(2, "Название категории должно содержать минимум 2 символа"),
+});

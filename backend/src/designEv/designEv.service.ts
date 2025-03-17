@@ -30,6 +30,36 @@ export class designEvService {
     });
   }
 
+  async createCategory(name: string) {
+    const existingCategory = await prisma.category.findUnique({
+      where: { category_name: name },
+    });
+
+    if (existingCategory) {
+      throw new Error("Category already exists");
+    }
+
+    return await prisma.category.create({
+      data: {
+        category_name: name,
+      },
+    });
+  }
+
+  async getCategoryByName(name: string) {
+    return await prisma.category.findUnique({
+      where: { category_name: name },
+    });
+  }
+
+  async getAllCategories() {
+    return await prisma.category.findMany({
+      select: {
+        category_name: true, 
+      },
+    });
+  }
+
   async updateEvent(id: number, eventData: designEv) {
     let categoryName = eventData.category || null;
 
