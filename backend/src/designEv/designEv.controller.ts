@@ -21,8 +21,40 @@ const createEvent: RequestHandler = async (req, res) => {
   }
 };
 
+const getReportByPeriod: RequestHandler = async (req, res) => {
+  const { startDate, endDate } = req.query;
+
+  if (!startDate || !endDate) {
+    res.status(400).json({ message: "Start date and end date are required" });
+    return; 
+  }
+
+  try {
+    const events = await eventsService.getEventsByPeriod(startDate as string, endDate as string);
+    res.status(200).json(events);
+  } catch (err) {
+    res.status(500).json({ message: "Error generating report", error: err });
+  }
+};
+
+const getReportByCategory: RequestHandler = async (req, res) => {
+  const { categoryName } = req.query;
+
+  if (!categoryName) {
+    res.status(400).json({ message: "Category name is required" });
+    return;
+  }
+
+  try {
+    const events = await eventsService.getEventsByCategory(categoryName as string);
+    res.status(200).json(events);
+  } catch (err) {
+    res.status(500).json({ message: "Error generating report", error: err });
+  }
+};
+
 const createCategory: RequestHandler = async (req, res) => {
-  const validation = createCategoryDto.safeParse(req.body);
+  const validation = createCategoryDto.safeParse(req.body); 
 
   if (!validation.success) {
     res.status(400).json({ message: validation.error.errors });
@@ -32,14 +64,14 @@ const createCategory: RequestHandler = async (req, res) => {
   try {
     const existingCategory = await eventsService.getCategoryByName(validation.data.name);
     if (existingCategory) {
-      res.status(409).json({ message: "Такая категория уже существует" });
+      res.status(409).json({ message: "Category already exists" });
       return;
     }
 
     const category = await eventsService.createCategory(validation.data.name);
     res.status(201).json(category);
   } catch (err) {
-    res.status(500).json({ message: "Ошибка при создании категории", error: err });
+    res.status(500).json({ message: "Error creating category", error: err });
   }
 };
 
@@ -48,7 +80,7 @@ const getCategories: RequestHandler = async (req, res) => {
     const categories = await eventsService.getAllCategories();
     res.status(200).json(categories);
   } catch (err) {
-    res.status(500).json({ message: "Ошибка при получении категорий", error: err });
+    res.status(500).json({ message: "Error getting categories", error: err });
   }
 };
 
@@ -99,6 +131,9 @@ const getAllEvents: RequestHandler = async (req, res) => {
 
 router.post("/categories", createCategory);
 router.get("/categories", getCategories);
+
+router.get("/reports/by-period", getReportByPeriod);
+router.get("/reports/by-category", getReportByCategory);
 
 router.post("/", createEvent);
 router.put("/:id", updateEvent);

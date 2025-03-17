@@ -30,6 +30,49 @@ export class designEvService {
     });
   }
 
+  async getEventsByPeriod(startDate: string, endDate: string) {
+    return await prisma.event.findMany({
+      where: {
+        event_date: {
+          gte: new Date(startDate),
+          lte: new Date(endDate),
+        },
+      },
+      include: {
+        Favorites: {
+          select: {
+            User: {
+              select: {
+                user_name: true,
+              },
+            },
+          },
+        },
+        category: true,
+      },
+    });
+  }
+
+  async getEventsByCategory(categoryName: string) {
+    return await prisma.event.findMany({
+      where: {
+        category_name: categoryName,
+      },
+      include: {
+        Favorites: {
+          select: {
+            User: {
+              select: {
+                user_name: true,
+              },
+            },
+          },
+        },
+        category: true,
+      },
+    });
+  }
+
   async createCategory(name: string) {
     const existingCategory = await prisma.category.findUnique({
       where: { category_name: name },
@@ -55,7 +98,7 @@ export class designEvService {
   async getAllCategories() {
     return await prisma.category.findMany({
       select: {
-        category_name: true, 
+        category_name: true,
       },
     });
   }
