@@ -1,14 +1,22 @@
 import { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { Button } from '../ui/Button';
+import { createEvent } from '../../api/createEvents';
+import { Event } from '../../interfaces/event.interface';
 
-export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave: (event: { name: string; title: string; date: string; location: string; description: string; category: string }) => void }) {
+export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave: (event: Event) => void }) {
 	const { control, handleSubmit, formState: { errors } } = useForm();
 	const [category, setCategory] = useState('');
+	const [isFavorite, setIsFavorite] = useState(false);
 
-	const onSubmit = (data: { name: string; title: string; date: string; location: string; description: string; category: string }) => {
-		onSave(data);
-		onClose();
+	const onSubmit = async (data: Event) => {
+		try {
+			await createEvent({ ...data, favorite: isFavorite });
+			onSave({ ...data, favorite: isFavorite });
+			onClose();
+		} catch (error) {
+			console.error('Ошибка при создании мероприятия:', error);
+		}
 	};
 
 	return (
@@ -19,7 +27,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className="mb-4 mt-10">
 							<Controller
-								name="name"
+								name="event_name"
 								control={control}
 								defaultValue=""
 								rules={{ required: 'Name is required' }}
@@ -34,7 +42,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 							/>
 							{errors.name && <p className="mt-1 text-sm text-[red-500]">{String(errors.name.message)}</p>}
 						</div>
-						
+
 						<div className="mb-4">
 							<Controller
 								name="title"
@@ -116,6 +124,26 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 								<option value="Наука">Наука</option>
 							</select>
 							{!category && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
+						</div>
+
+						<div className="mt-4">
+							<p className="text-lg">Добавить в избранное?</p>
+							<div className="mt-2 flex">
+								<button
+									type="button"
+									onClick={() => setIsFavorite(true)}
+									className={`mr-2 rounded px-4 py-2 ${isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'} text-[white]`}
+								>
+									Да
+								</button>
+								<button
+									type="button"
+									onClick={() => setIsFavorite(false)}
+									className={`rounded px-4 py-2 ${!isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'} text-[white]`}
+								>
+									Нет
+								</button>
+							</div>
 						</div>
 
 						<div className="mt-5 flex justify-between">

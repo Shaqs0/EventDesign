@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response, ErrorRequestHandler } from "e
 import { designEvRouter } from "./src/designEv/designEv.controller";
 import dotenv from "dotenv";
 import { authRouter } from './src/auth/auth.controller';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -9,6 +10,14 @@ const app = express();
 
 async function main() {
   app.use(express.json()); 
+
+  app.use(cors());
+
+  app.use(cors({
+    origin: 'http://localhost:5173', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  }));
 
   const jsonErrorHandler: ErrorRequestHandler = (err, req, res, next): void => {
     if (err instanceof SyntaxError && "body" in err) {
