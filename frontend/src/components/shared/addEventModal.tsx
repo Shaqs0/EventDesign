@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Button } from '../ui/Button';
-import { createEvent } from '../../api/createEvents';
 import { Event } from '../../interfaces/event.interface';
+import { createEvent } from '../../api/fetchEvents';
 
 export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave: (event: Event) => void }) {
 	const { control, handleSubmit, formState: { errors } } = useForm<Event>();

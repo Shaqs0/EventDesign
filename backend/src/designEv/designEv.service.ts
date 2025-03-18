@@ -13,7 +13,7 @@ export class designEvService {
       });
 
       if (!categoryExists) {
-        categoryName = null; 
+        categoryName = null;
       }
     }
 
@@ -25,7 +25,7 @@ export class designEvService {
           event_date: event.event_date ? new Date(event.event_date) : null,
           location: event.location || null,
           description: event.description || null,
-          category_name: categoryName, 
+          category_name: categoryName,
           favorite: event.favorite ? 1 : null,
         },
       });
@@ -34,7 +34,7 @@ export class designEvService {
       throw new Error('Ошибка при создании события');
     }
   }
-  
+
   async getEventsByPeriod(startDate: string, endDate: string) {
     return await prisma.event.findMany({
       where: {
@@ -110,24 +110,24 @@ export class designEvService {
 
   async updateEvent(id: number, eventData: designEv) {
     let categoryName = eventData.category || null;
-  
+
     if (categoryName) {
       const categoryExists = await prisma.category.findUnique({
         where: { category_name: categoryName },
       });
-  
+
       if (!categoryExists) {
         categoryName = null;
       }
     }
-  
+
     try {
       return await prisma.event.update({
         where: { event_id: id },
         data: {
           event_name: eventData.event_name,
           title: eventData.title || "Без названия",
-          event_date: eventData.event_date ? new Date(eventData.event_date) : null, 
+          event_date: eventData.event_date ? new Date(eventData.event_date) : null,
           location: eventData.location || null,
           description: eventData.description || null,
           category_name: categoryName,
@@ -138,7 +138,22 @@ export class designEvService {
       return null;
     }
   }
-  
+
+
+  async updateEventFavoriteStatus(id: number, favorite: boolean) {
+    try {
+      return await prisma.event.update({
+        where: { event_id: id },
+        data: {
+          favorite: favorite ? 1 : 0,  
+        },
+      });
+    } catch (error) {
+      console.error('Ошибка при обновлении статуса избранного:', error);
+      throw new Error('Ошибка при обновлении статуса избранного');
+    }
+}
+
 
   async deleteEvent(id: number) {
     try {
@@ -170,5 +185,4 @@ export class designEvService {
       },
     });
   }
-  
 }

@@ -9,5 +9,5 @@ export interface Event {
   description?: string;
   category: { category_name: string }; 
   active: boolean;
-  favorite: boolean;
+  favorite: number;
 }

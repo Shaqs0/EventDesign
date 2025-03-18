@@ -4,5 +4,6 @@ export {default as PlusIcon} from './plus.svg';
 export {default as CalendarIcon} from './calendar.svg';
 export {default as LocationIcon} from './location.svg';
 export {default as StarNFill} from './star_n_fill.svg';
+export {default as StartFill} from './star_fill.svg';
 export {default as LightMode} from './lightMode.svg';
 export {default as NightMode} from './darkMode.svg';

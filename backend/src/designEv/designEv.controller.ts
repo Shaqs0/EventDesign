@@ -37,6 +37,27 @@ const getReportByPeriod: RequestHandler = async (req, res) => {
   }
 };
 
+const updateEventFavorite: RequestHandler = async (req, res) => {
+  const { id } = req.params;
+  const { favorite } = req.body;
+
+  if (typeof favorite !== 'boolean') {
+    res.status(400).json({ message: "'favorite' must be a boolean value" });
+    return;
+  }
+
+  try {
+    const event = await eventsService.updateEventFavoriteStatus(parseInt(id), favorite);
+    if (!event) {
+      res.status(404).json({ message: "Event not found" });
+      return;
+    }
+    res.status(200).json(event);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating event favorite status", error: err });
+  }
+};
+
 const getReportByCategory: RequestHandler = async (req, res) => {
   const { categoryName } = req.query;
 
@@ -134,6 +155,8 @@ router.get("/categories", getCategories);
 
 router.get("/reports/by-period", getReportByPeriod);
 router.get("/reports/by-category", getReportByCategory);
+
+router.put("/:id/favorite", updateEventFavorite);  
 
 router.post("/", createEvent);
 router.put("/:id", updateEvent);

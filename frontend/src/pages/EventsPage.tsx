@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { CalendarIcon, LocationIcon, PlusIcon, StarNFill } from '../assets';
+import { CalendarIcon, LocationIcon, PlusIcon, StarNFill, StartFill } from '../assets';
 import { Button, CardButton } from '../components';
 import { AddEventModal } from '../components/shared/addEventModal';
 import { Event } from '../interfaces/event.interface';
-import { fetchEvents } from '../api/events';
+import { fetchEvents  } from '../api/events';
+import { updateEventFavorite } from '../api/fetchEvents';
 
 export function EventsPage() {
 	const [events, setEvents] = useState<Event[]>([]);
@@ -34,13 +35,26 @@ export function EventsPage() {
 			...newEvent,
 			id: events.length + 1,
 			active: false,
-			favorite: false,
-			category: { category_name: newEvent.category },
-			category_name: '',
-			event_id: 0
+			favorite: 0,
+			category: { category_name: newEvent.category }, 
+			category_name: newEvent.category,
+			event_id: events.length + 1 
 		};
-
+	
 		setEvents(prevEvents => [...prevEvents, newEventWithId]);
+	};
+
+	const handleFavoriteToggle = async (eventId: number, currentFavorite: boolean) => {
+		const updatedFavoriteStatus = currentFavorite ? 0 : 1;
+		const updatedEvent = { event_id: eventId, favorite: updatedFavoriteStatus };
+
+		await updateEventFavorite(updatedEvent);
+
+		setEvents(prevEvents =>
+			prevEvents.map(event =>
+				event.event_id === eventId ? { ...event, favorite: updatedFavoriteStatus } : event
+			)
+		);
 	};
 
 	return (
@@ -60,7 +74,7 @@ export function EventsPage() {
 							name={event.event_name}
 							title={event.title}
 							date={event.event_date}
-							category={event.category_name ?? ''}
+							category={event.category_name}
 							active={event.event_id === activeEventId}
 							onClick={() => handleCardClick(event.event_id)}
 						/>
@@ -73,7 +87,11 @@ export function EventsPage() {
 					<>
 						<div className="flex w-[88%] items-center justify-between">
 							<h1 className="grow text-center text-[32px] font-semibold">{activeEvent.title}</h1>
-							<img src={StarNFill} className="ml-auto cursor-pointer" />
+							<img
+								src={activeEvent.favorite === 1 ? StartFill : StarNFill}
+								className="ml-auto cursor-pointer"
+								onClick={() => handleFavoriteToggle(activeEvent.event_id, activeEvent.favorite === 1)}
+							/>
 						</div>
 
 						<div className="flex w-full items-center justify-start p-10 px-20">
