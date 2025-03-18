@@ -13,23 +13,28 @@ export class designEvService {
       });
 
       if (!categoryExists) {
-        categoryName = null;
+        categoryName = null; 
       }
     }
 
-    return await prisma.event.create({
-      data: {
-        event_name: event.event_name,
-        title: event.title || 'Без названия',
-        event_date: event.event_date ? new Date(event.event_date).toISOString() : null,
-        location: event.location || null,
-        description: event.description || null,
-        category_name: categoryName,
-        favorite: event.favorite ? 1 : null,
-      },
-    });
+    try {
+      return await prisma.event.create({
+        data: {
+          event_name: event.event_name,
+          title: event.title || 'Без названия',
+          event_date: event.event_date ? new Date(event.event_date) : null,
+          location: event.location || null,
+          description: event.description || null,
+          category_name: categoryName, 
+          favorite: event.favorite ? 1 : null,
+        },
+      });
+    } catch (error) {
+      console.error('Ошибка при создании события:', error);
+      throw new Error('Ошибка при создании события');
+    }
   }
-
+  
   async getEventsByPeriod(startDate: string, endDate: string) {
     return await prisma.event.findMany({
       where: {
@@ -105,24 +110,24 @@ export class designEvService {
 
   async updateEvent(id: number, eventData: designEv) {
     let categoryName = eventData.category || null;
-
+  
     if (categoryName) {
       const categoryExists = await prisma.category.findUnique({
         where: { category_name: categoryName },
       });
-
+  
       if (!categoryExists) {
         categoryName = null;
       }
     }
-
+  
     try {
       return await prisma.event.update({
         where: { event_id: id },
         data: {
           event_name: eventData.event_name,
-          title: eventData.title || 'Без названия',
-          event_date: eventData.event_date ? new Date(eventData.event_date).toISOString() : null,
+          title: eventData.title || "Без названия",
+          event_date: eventData.event_date ? new Date(eventData.event_date) : null, 
           location: eventData.location || null,
           description: eventData.description || null,
           category_name: categoryName,
@@ -133,6 +138,7 @@ export class designEvService {
       return null;
     }
   }
+  
 
   async deleteEvent(id: number) {
     try {
@@ -147,9 +153,22 @@ export class designEvService {
 
   async getAllEvents() {
     return await prisma.event.findMany({
-      include: {
-        category: true,
+      select: {
+        event_id: true,
+        event_name: true,
+        event_date: true,
+        location: true,
+        description: true,
+        title: true,
+        favorite: true,
+        category_name: true,
+        category: {
+          select: {
+            category_name: true,
+          },
+        },
       },
     });
   }
+  
 }

@@ -29,14 +29,14 @@ export function EventsPage() {
 
 	const activeEvent = events.find(event => event.event_id === activeEventId);
 
-	const handleAddEvent = (newEvent: { event_name: string; title: string; date: string; location: string; description: string; category: string }) => {
+	const handleAddEvent = (newEvent: { event_name: string; title: string; event_date: string; location: string; description: string; category: string }) => {
 		const newEventWithId: Event = {
 			...newEvent,
 			id: events.length + 1,
 			active: false,
 			favorite: false,
 			category: { category_name: newEvent.category },
-			category_name: undefined,
+			category_name: '',
 			event_id: 0
 		};
 
@@ -59,7 +59,7 @@ export function EventsPage() {
 							key={event.event_id ?? index}
 							name={event.event_name}
 							title={event.title}
-							date={event.date}
+							date={event.event_date}
 							category={event.category_name ?? ''}
 							active={event.event_id === activeEventId}
 							onClick={() => handleCardClick(event.event_id)}
@@ -81,7 +81,7 @@ export function EventsPage() {
 								<div className="flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
 									<img src={CalendarIcon} className="size-[18px]" alt="Дата" />
 									<span className="pl-2">Дата:</span>
-									<span className="pl-4 font-semibold">{activeEvent.date}</span>
+									<span className="pl-4 font-semibold">{new Date(activeEvent.event_date).toLocaleDateString('ru-RU')}</span>
 								</div>
 								<div className="mt-10 flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
 									<img src={LocationIcon} className="size-[18px]" alt="Место" />

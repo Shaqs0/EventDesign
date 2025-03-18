@@ -13,6 +13,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 		try {
 			const eventData = {
 				...data,
+				category,
 				description: data.description || '', 
 				favorite: isFavorite,
 			};
@@ -68,7 +69,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 
 						<div className="mb-4">
 							<Controller
-								name="date"
+								name="event_date"
 								control={control}
 								defaultValue=""
 								rules={{ required: 'Date is required' }}
@@ -80,7 +81,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 									/>
 								)}
 							/>
-							{errors.date && <p className="mt-1 text-sm text-[red-500]">{String(errors.date.message)}</p>}
+							{errors.event_date && <p className="mt-1 text-sm text-[red-500]">{String(errors.event_date.message)}</p>}
 						</div>
 
 						<div className="mb-4">
