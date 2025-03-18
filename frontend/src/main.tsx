@@ -3,11 +3,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from './layout/Layout';
-import { SettingsPage, SignPage } from './pages';
-import { EventsPage } from './pages/EventsPage';
-import { FavoritesPage } from './pages/FavoritesPage';
-import { ReportsPage } from './pages/ReportsPage';
-
+import { EventsPage, FavoritePage, ReportsPage, SettingsPage, SignPage } from './pages';
 
 const router = createBrowserRouter ([
 	{
@@ -20,7 +16,7 @@ const router = createBrowserRouter ([
 			},
 			{
 				path: '/favorites',
-				element: <FavoritesPage/>
+				element: <FavoritePage/>
 			},
 			{
 				path: '/reports',
