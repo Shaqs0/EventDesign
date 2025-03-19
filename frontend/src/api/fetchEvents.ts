@@ -48,4 +48,37 @@ export const updateEventFavorite = async (updatedEvent: { event_id: number; favo
 	}
 };
 
+export const deleteEvent = async (eventId: number) => {
+	try {
+		const response = await fetch(`${PREFIX}events/${eventId}`, {
+			method: 'DELETE',
+		});
+
+		if (!response.ok) {
+			throw new Error('Ошибка при удалении события');
+		}
+
+		return await response.json();
+	} catch (error) {
+		console.error('Ошибка при удалении события:', error);
+		throw error;
+	}
+};
+
+
+export const updateEvent = async (id: string, eventData: Event) => {
+	const response = await fetch(`http://localhost:4200/api/events/${id}`, {
+		method: 'PUT', 
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify(eventData),
+	});
+	if (!response.ok) {
+		throw new Error('Error updating event');
+	}
+	return response.json();
+};
+
+
 

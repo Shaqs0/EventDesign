@@ -86,7 +86,7 @@ export function FavoritePage() {
 									<span className="pl-4 font-semibold">{activeEvent.location}</span>
 								</div>
 								<div className="mt-10">
-									<div className="mt-2 h-[30vh] w-full rounded-lg bg-primary-grey p-2 text-[white]">
+									<div className="mt-2 h-[30vh] w-full rounded-lg bg-primary-grey p-2 text-[white]" style={{ wordBreak: 'break-word' }}>
 										{activeEvent.description ? (
 											<p>{activeEvent.description}</p>
 										) : (

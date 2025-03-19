@@ -1,10 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { CalendarIcon, LocationIcon, PlusIcon, StarNFill, StartFill } from '../assets';
-import { Button, CardButton } from '../components';
-import { AddEventModal } from '../components/shared/addEventModal';
+import { AddEventModal, Button, CardButton } from '../components';
 import { Event } from '../interfaces/event.interface';
-import { fetchEvents  } from '../api/events';
-import { updateEventFavorite } from '../api/fetchEvents';
+import { fetchEvents } from '../api/events';
+import { deleteEvent, updateEventFavorite } from '../api/fetchEvents';
 
 export function EventsPage() {
 	const [events, setEvents] = useState<Event[]>([]);
@@ -14,7 +13,7 @@ export function EventsPage() {
 	useEffect(() => {
 		const loadEvents = async () => {
 			const fetchedEvents = await fetchEvents();
-			const formattedEvents = fetchedEvents.map(event => ({
+			const formattedEvents = fetchedEvents.map((event) => ({
 				...event,
 				category: event.category_name ? { category_name: event.category_name } : { category_name: '' },
 			}));
@@ -28,20 +27,15 @@ export function EventsPage() {
 		setActiveEventId(eventId);
 	};
 
-	const activeEvent = events.find(event => event.event_id === activeEventId);
+	const activeEvent = events.find((event) => event.event_id === activeEventId);
 
-	const handleAddEvent = (newEvent: { event_name: string; title: string; event_date: string; location: string; description: string; category: string }) => {
-		const newEventWithId: Event = {
-			...newEvent,
-			id: events.length + 1,
-			active: false,
-			favorite: 0,
-			category: { category_name: newEvent.category }, 
-			category_name: newEvent.category,
-			event_id: events.length + 1 
-		};
-	
-		setEvents(prevEvents => [...prevEvents, newEventWithId]);
+	const handleUpdateEvent = (updatedEvent: Event) => {
+
+		setEvents((prevEvents) =>
+			prevEvents.map((event) =>
+				event.event_id === updatedEvent.event_id ? { ...event, ...updatedEvent } : event
+			)
+		);
 	};
 
 	const handleFavoriteToggle = async (eventId: number, currentFavorite: boolean) => {
@@ -50,15 +44,30 @@ export function EventsPage() {
 
 		await updateEventFavorite(updatedEvent);
 
-		setEvents(prevEvents =>
-			prevEvents.map(event =>
+		setEvents((prevEvents) =>
+			prevEvents.map((event) =>
 				event.event_id === eventId ? { ...event, favorite: updatedFavoriteStatus } : event
 			)
 		);
 	};
 
+	const handleDeleteEvent = async (eventId: number) => {
+		try {
+			await deleteEvent(eventId);
+			setEvents((prevEvents) => prevEvents.filter((event) => event.event_id !== eventId));
+			setActiveEventId(null);
+		} catch (error) {
+			console.error('Ошибка при удалении события:', error);
+			alert('Не удалось удалить событие. Попробуйте еще раз.');
+		}
+	};
+
+	const handleEditEvent = () => {
+		setIsModalOpen(true);
+	};
+
 	return (
-		<div className="flex min-h-[80vh] w-full">
+		<div className="flex min-h-[80vh] w-full overflow-x-hidden">
 			<aside className="mt-20 h-[650px] w-96 min-w-96 shrink-0 overflow-y-scroll pl-2 pr-1">
 				<button
 					className="flex h-[57px] w-full cursor-pointer items-center justify-center gap-3 bg-[white] bg-opacity-[3%] p-[10px]"
@@ -68,9 +77,9 @@ export function EventsPage() {
 					<p className="font-semibold">Новое мероприятие</p>
 				</button>
 				<div className="mt-14 flex flex-col gap-5">
-					{events.map((event, index) => (
+					{events.map((event) => (
 						<CardButton
-							key={event.event_id ?? index}
+							key={event.event_id}
 							name={event.event_name}
 							title={event.title}
 							date={event.event_date}
@@ -94,7 +103,7 @@ export function EventsPage() {
 							/>
 						</div>
 
-						<div className="flex w-full items-center justify-start p-10 px-20">
+						<div className="flex w-full flex-col items-center justify-start p-10 px-20">
 							<div className="w-full justify-start rounded-lg p-4">
 								<div className="flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
 									<img src={CalendarIcon} className="size-[18px]" alt="Дата" />
@@ -107,15 +116,20 @@ export function EventsPage() {
 									<span className="pl-4 font-semibold">{activeEvent.location}</span>
 								</div>
 								<div className="mt-10">
-									<div className="mt-2 h-[30vh] w-full rounded-lg bg-primary-grey p-2 text-[white]">
+									<div className="h-[30vh] max-h-[400px] max-w-[90vw] overflow-y-auto overflow-x-hidden rounded-lg bg-primary-grey p-2 text-[white]" style={{ wordBreak: 'break-word' }}>
 										{activeEvent.description ? (
-											<p>{activeEvent.description}</p>
+											<p className="break-words text-sm md:text-base">{activeEvent.description}</p>
 										) : (
-											<p className="italic text-[gray-400]">Описание события не предоставлено.</p>
+											<p className="text-sm italic text-[gray-400] md:text-base">Описание события не предоставлено.</p>
 										)}
 									</div>
 								</div>
-								<Button appearance="smallButton" title="Сохранить" />
+							</div>
+							<div className="ml-5 mt-5 flex w-full justify-start gap-10">
+								<Button appearance="smallButton" title="Редактировать" onClick={handleEditEvent} />
+								<button className="font-semibold" onClick={() => handleDeleteEvent(activeEvent.event_id)}>
+									Удалить
+								</button>
 							</div>
 						</div>
 					</>
@@ -127,7 +141,8 @@ export function EventsPage() {
 			{isModalOpen && (
 				<AddEventModal
 					onClose={() => setIsModalOpen(false)}
-					onSave={handleAddEvent}
+					onSave={handleUpdateEvent}
+					eventId={activeEventId ?? undefined}
 				/>
 			)}
 		</div>

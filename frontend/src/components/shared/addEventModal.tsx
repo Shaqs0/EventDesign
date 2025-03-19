@@ -2,34 +2,42 @@ import { useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import { Event } from '../../interfaces/event.interface';
-import { createEvent } from '../../api/fetchEvents';
+import { createEvent, updateEvent } from '../../api/fetchEvents'; 
 
-export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave: (event: Event) => void }) {
-	const { control, handleSubmit, formState: { errors } } = useForm<Event>();
+export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => void; onSave: (event: Event) => void; eventId: string }) {
+	const { control, handleSubmit, formState: { errors }} = useForm<Event>();
 	const [category, setCategory] = useState('');
 	const [isFavorite, setIsFavorite] = useState(false);
+
+
 
 	const onSubmit: SubmitHandler<Event> = async (data) => {
 		try {
 			const eventData = {
 				...data,
 				category,
-				description: data.description || '', 
+				description: data.description || '',
 				favorite: isFavorite,
 			};
-			await createEvent(eventData);
+
+			if (eventId) {
+				await updateEvent(eventId, eventData);
+			} else {
+				await createEvent(eventData);
+			}
+
 			onSave(eventData); 
 			onClose();
 		} catch (error) {
-			console.error('Ошибка при создании мероприятия:', error);
+			console.error('Ошибка при сохранении мероприятия:', error);
 		}
 	};
 
 	return (
-		<>
+		<div>
 			<div className="fixed inset-0 z-50 flex w-full items-center justify-center bg-[black] bg-opacity-[75%]">
 				<div className="max-w-[600px] rounded-md bg-primary-grey p-6">
-					<p className='text-[33px]'>Добавление мероприятия</p>
+					<p className='text-[33px]'>{eventId ? 'Редактирование мероприятия' : 'Добавление мероприятия'}</p>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className="mb-4 mt-10">
 							<Controller
@@ -129,7 +137,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 								<option value="Музыка">Музыка</option>
 								<option value="Наука">Наука</option>
 							</select>
-							{!category && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
+							{category === '' && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
 						</div>
 
 						<div className="mt-4">
@@ -155,7 +163,7 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 						<div className="mt-5 flex justify-between">
 							<Button
 								appearance='smallButton'
-								title='Сохранить'
+								title={eventId ? 'Сохранить изменения' : 'Сохранить'}
 								className="rounded bg-[blue-500] px-4 py-2 text-[white] hover:bg-[blue-600]"
 							/>
 							<button
@@ -169,6 +177,6 @@ export function AddEventModal({ onClose, onSave }: { onClose: () => void; onSave
 					</form>
 				</div>
 			</div>
-		</>
+		</div>
 	);
 }
