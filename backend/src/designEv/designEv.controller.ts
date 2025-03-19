@@ -126,6 +126,41 @@ const updateEvent: RequestHandler = async (req, res) => {
   }
 };
 
+const updateCategory: RequestHandler = async (req, res) => {
+  const { categoryName } = req.params; 
+  const { name } = req.body;
+
+  if (!name) {
+    res.status(400).json({ message: "Category name is required" });
+    return;
+  }
+
+  try {
+    const updatedCategory = await eventsService.updateCategory(categoryName, name); 
+    res.status(200).json(updatedCategory);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating category", error: err });
+  }
+};
+
+
+const deleteCategory: RequestHandler = async (req, res) => {
+  const { categoryName } = req.params;
+
+  try {
+    const deletedCategory = await eventsService.deleteCategory(categoryName); 
+    if (!deletedCategory) {
+      res.status(404).json({ message: "Category not found" });
+      return;
+    }
+    res.status(200).json({ message: "Category deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error deleting category", error: err });
+  }
+};
+
+
+
 const deleteEvent: RequestHandler = async (req, res) => {
   const { id } = req.params;
 
@@ -169,6 +204,9 @@ const getAllEvents: RequestHandler = async (req, res) => {
 
 router.post("/categories", createCategory);
 router.get("/categories", getCategories);
+
+router.put("/categories/:categoryName", updateCategory);
+router.delete("/categories/:categoryName", deleteCategory);
 
 router.get("/reports/by-period", getReportByPeriod);
 router.get("/reports/by-category", getReportByCategory);

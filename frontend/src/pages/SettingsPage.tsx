@@ -12,7 +12,7 @@ export function SettingsPage() {
 
 	const userInfo = async () => {
 		if (!userId) {
-			console.error('User ID not found');
+			console.error('User ID not found'); 
 			return;
 		}
 

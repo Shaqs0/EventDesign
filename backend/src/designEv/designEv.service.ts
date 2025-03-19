@@ -135,10 +135,53 @@ export class designEvService {
         },
       });
     } catch (error) {
+      console.error('Ошибка при обновлении события:', error);
       return null;
     }
   }
 
+  async updateCategory(currentName: string, newName: string) {
+    try {
+      const existingCategory = await prisma.category.findUnique({
+        where: { category_name: currentName }, 
+      });
+  
+      if (!existingCategory) {
+        throw new Error("Category not found");
+      }
+  
+      const categoryExists = await prisma.category.findUnique({
+        where: { category_name: newName },
+      });
+  
+      if (categoryExists) {
+        throw new Error("Category name already exists");
+      }
+  
+      return await prisma.category.update({
+        where: { category_name: currentName }, 
+        data: { category_name: newName }, 
+      });
+      
+    } catch (error) {
+      console.error('Ошибка при обновлении категории:', error);
+      throw new Error(`Error updating category: ${error}`);
+    }
+  }
+  
+
+  async deleteCategory(categoryName: string) {
+    try {
+      const deletedCategory = await prisma.category.delete({
+        where: { category_name: categoryName }, 
+      });
+      return deletedCategory;
+    } catch (error) {
+      console.error('Ошибка при удалении категории:', error);
+      return null;
+    }
+  }
+  
 
   async updateEventFavoriteStatus(id: number, favorite: boolean) {
     try {
@@ -152,8 +195,7 @@ export class designEvService {
       console.error('Ошибка при обновлении статуса избранного:', error);
       throw new Error('Ошибка при обновлении статуса избранного');
     }
-}
-
+  }
 
   async deleteEvent(id: number) {
     try {
@@ -162,6 +204,7 @@ export class designEvService {
       });
       return deletedEvent;
     } catch (error) {
+      console.error('Ошибка при удалении события:', error);
       return null;
     }
   }
