@@ -3,10 +3,13 @@ import { useForm } from 'react-hook-form';
 import { Profile } from '../interfaces/profile.interface';
 import { LogoWhite } from '../assets';
 import { loginUser, registerUser } from '../api/user';
+import { useNavigate } from 'react-router-dom';
 
 export function SignPage() {
 	const [isSignIn, setIsSignIn] = useState(true);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
+	const navigate = useNavigate();
+	
 	const {
 		register,
 		handleSubmit,
@@ -22,7 +25,9 @@ export function SignPage() {
 			} else {
 				await registerUser(data);
 			}
-			reset(); 
+			reset();
+			navigate('/');
+			
 		} catch (error: any) {
 			setErrorMessage(error?.message || 'Ошибка сервера');
 		}

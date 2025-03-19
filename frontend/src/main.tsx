@@ -4,38 +4,39 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Layout } from './layout/Layout';
 import { EventsPage, FavoritePage, ReportsPage, SettingsPage, SignPage } from './pages';
+import { PrivateRoute } from './components';
 
-const router = createBrowserRouter ([
+const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <Layout/>,
+		element: <Layout />,
 		children: [
 			{
 				path: '/',
-				element: <EventsPage/>
+				element: <PrivateRoute><EventsPage /></PrivateRoute>, 
 			},
 			{
 				path: '/favorites',
-				element: <FavoritePage/>
+				element: <PrivateRoute><FavoritePage /></PrivateRoute>, 
 			},
 			{
 				path: '/reports',
-				element: <ReportsPage/>
+				element: <PrivateRoute><ReportsPage /></PrivateRoute>, 
 			},
 			{
 				path: '/settings',
-				element: <SettingsPage/>
-			}
-		]
+				element: <PrivateRoute><SettingsPage /></PrivateRoute>, 
+			},
+		],
 	},
 	{
 		path: '/sign',
-		element: <SignPage/>
+		element: <SignPage />,
 	},
 ]);
 
 createRoot(document.getElementById('root')!).render(
 	<StrictMode>
-		<RouterProvider router={router}/>
+		<RouterProvider router={router} />
 	</StrictMode>,
 );

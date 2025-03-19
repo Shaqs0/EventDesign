@@ -22,8 +22,8 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     try {
         const { user, accessToken, refreshToken } = await auth.register(validation.data);
 
-        res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000 }); // 2 часа
-        res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 }); // 7 дней
+        res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000, httpOnly: false  }); // 2 часа
+        res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: false  }); // 7 дней
 
         res.status(201).json({ user });
     } catch (err) {
@@ -46,8 +46,8 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
     try {
         const { user, accessToken, refreshToken } = await auth.login(validation.data);
 
-        res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000 });
-        res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });
+        res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000, httpOnly: false  });
+        res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: false  });
 
         res.status(200).json({ user });
     } catch (err) {
