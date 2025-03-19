@@ -11,12 +11,11 @@ const app = express();
 async function main() {
   app.use(express.json()); 
 
-  app.use(cors());
-
   app.use(cors({
     origin: 'http://localhost:5173', 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true 
   }));
 
   const jsonErrorHandler: ErrorRequestHandler = (err, req, res, next): void => {

@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 const SECRET_KEY = process.env.JWT_SECRET || 'secret';
 const REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || 'refresh_secret';
 
-export class authService {
+export class AuthService {
     generateTokens(userId: number) {
         const accessToken = jwt.sign({ userId }, SECRET_KEY, { expiresIn: '2h' });
         const refreshToken = jwt.sign({ userId }, REFRESH_SECRET, { expiresIn: '7d' });
@@ -20,8 +20,7 @@ export class authService {
             data: { ...user, password: hashedPassword }
         });
 
-        const tokens = this.generateTokens(newUser.user_id);
-        return { user: newUser, ...tokens };
+        return { user: newUser, ...this.generateTokens(newUser.user_id) };
     }
 
     async login({ login, password }: { login: string, password: string }) {
@@ -30,8 +29,7 @@ export class authService {
             throw new Error('Invalid credentials');
         }
 
-        const tokens = this.generateTokens(user.user_id);
-        return { user, ...tokens };
+        return { user, ...this.generateTokens(user.user_id) };
     }
 
     async refreshToken(token: string) {
