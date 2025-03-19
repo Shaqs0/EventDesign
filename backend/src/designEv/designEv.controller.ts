@@ -141,6 +141,23 @@ const deleteEvent: RequestHandler = async (req, res) => {
   }
 };
 
+const getUserInfo: RequestHandler = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await eventsService.getUserInfo(parseInt(userId));
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching user info", error: err });
+  }
+};
+
 const getAllEvents: RequestHandler = async (req, res) => {
   try {
     const events = await eventsService.getAllEvents();
@@ -155,6 +172,8 @@ router.get("/categories", getCategories);
 
 router.get("/reports/by-period", getReportByPeriod);
 router.get("/reports/by-category", getReportByCategory);
+
+router.get("/user/:userId", getUserInfo);
 
 router.put("/:id/favorite", updateEventFavorite);  
 

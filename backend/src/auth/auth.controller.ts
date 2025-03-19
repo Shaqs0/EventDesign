@@ -22,6 +22,8 @@ router.post('/register', async (req: Request, res: Response): Promise<void> => {
     try {
         const { user, accessToken, refreshToken } = await auth.register(validation.data);
 
+        res.cookie('userId', user.user_id, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: false });
+
         res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000, httpOnly: false  }); // 2 часа
         res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: false  }); // 7 дней
 
@@ -45,6 +47,8 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 
     try {
         const { user, accessToken, refreshToken } = await auth.login(validation.data);
+
+        res.cookie('userId', user.user_id, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: false });
 
         res.cookie('accessToken', accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000, httpOnly: false  });
         res.cookie('refreshToken', refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: false  });
@@ -70,6 +74,7 @@ router.post('/refresh', async (req: Request, res: Response): Promise<void> => {
 
     try {
         const tokens = await auth.refreshToken(refreshToken);
+
 
         res.cookie('accessToken', tokens.accessToken, { ...COOKIE_OPTIONS, maxAge: 2 * 60 * 60 * 1000 });
         res.cookie('refreshToken', tokens.refreshToken, { ...COOKIE_OPTIONS, maxAge: 7 * 24 * 60 * 60 * 1000 });

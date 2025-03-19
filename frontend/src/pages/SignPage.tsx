@@ -1,15 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Profile } from '../interfaces/profile.interface';
 import { LogoWhite } from '../assets';
 import { loginUser, registerUser } from '../api/user';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 export function SignPage() {
 	const [isSignIn, setIsSignIn] = useState(true);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 	const navigate = useNavigate();
 	
+	const isAuthenticated = !!Cookies.get('accessToken'); 
+
+	useEffect(() => {
+		if (isAuthenticated) {
+			navigate('/');
+		}
+	}, [isAuthenticated, navigate]);
+
 	const {
 		register,
 		handleSubmit,
@@ -27,7 +36,7 @@ export function SignPage() {
 			}
 			reset();
 			navigate('/');
-			
+
 		} catch (error: any) {
 			setErrorMessage(error?.message || 'Ошибка сервера');
 		}
@@ -120,7 +129,6 @@ export function SignPage() {
 						</button>
 					</div>
 				</form>
-				{isSignIn && <p className="mt-3 text-center text-sm text-[gray-500]">Забыли пароль?</p>}
 			</div>
 		</div>
 	);

@@ -166,6 +166,21 @@ export class designEvService {
     }
   }
 
+  async getUserInfo(userId: number) {
+    try {
+      return await prisma.user.findUnique({
+        where: { user_id: userId }, 
+        select: {
+          login: true,
+          email: true,
+        },
+      });
+    } catch (error) {
+      console.error('Ошибка при получении информации о пользователе:', error);
+      throw new Error('Ошибка при получении информации о пользователе');
+    }
+  }
+
   async getAllEvents() {
     return await prisma.event.findMany({
       select: {
