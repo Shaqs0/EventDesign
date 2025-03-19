@@ -4,7 +4,7 @@ import { Button } from '../ui/Button';
 import { Event } from '../../interfaces/event.interface';
 import { createEvent, updateEvent } from '../../api/fetchEvents'; 
 
-export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => void; onSave: (event: Event) => void; eventId: string }) {
+export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => void; onSave: (event: Event) => void; eventId?: string }) {
 	const { control, handleSubmit, formState: { errors }} = useForm<Event>();
 	const [category, setCategory] = useState('');
 	const [isFavorite, setIsFavorite] = useState(false);

@@ -9,6 +9,9 @@ export function EventsPage() {
 	const [events, setEvents] = useState<Event[]>([]);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [activeEventId, setActiveEventId] = useState<number | null>(null);
+	const [isEditButtonClicked, setIsEditButtonClicked] = useState<boolean>(false); 
+	const [reloadEvents, setReloadEvents] = useState(false); 
+
 
 	useEffect(() => {
 		const loadEvents = async () => {
@@ -21,7 +24,7 @@ export function EventsPage() {
 		};
 
 		loadEvents();
-	}, []);
+	}, [reloadEvents]); 
 
 	const handleCardClick = (eventId: number) => {
 		setActiveEventId(eventId);
@@ -30,12 +33,13 @@ export function EventsPage() {
 	const activeEvent = events.find((event) => event.event_id === activeEventId);
 
 	const handleUpdateEvent = (updatedEvent: Event) => {
-
 		setEvents((prevEvents) =>
 			prevEvents.map((event) =>
 				event.event_id === updatedEvent.event_id ? { ...event, ...updatedEvent } : event
 			)
 		);
+
+		setReloadEvents((prev) => !prev); 
 	};
 
 	const handleFavoriteToggle = async (eventId: number, currentFavorite: boolean) => {
@@ -54,7 +58,7 @@ export function EventsPage() {
 	const handleDeleteEvent = async (eventId: number) => {
 		try {
 			await deleteEvent(eventId);
-			setEvents((prevEvents) => prevEvents.filter((event) => event.event_id !== eventId));
+			setReloadEvents((prev) => !prev); 
 			setActiveEventId(null);
 		} catch (error) {
 			console.error('Ошибка при удалении события:', error);
@@ -63,7 +67,13 @@ export function EventsPage() {
 	};
 
 	const handleEditEvent = () => {
-		setIsModalOpen(true);
+		setIsEditButtonClicked(true);  
+		setIsModalOpen(true); 
+	};
+
+	const handleCloseModal = () => {
+		setIsModalOpen(false);
+		setIsEditButtonClicked(false);  
 	};
 
 	return (
@@ -141,6 +151,13 @@ export function EventsPage() {
 			{isModalOpen && (
 				<AddEventModal
 					onClose={() => setIsModalOpen(false)}
+					onSave={handleUpdateEvent}
+				/>
+			)}
+
+			{(isModalOpen && isEditButtonClicked) && (
+				<AddEventModal
+					onClose={handleCloseModal}
 					onSave={handleUpdateEvent}
 					eventId={activeEventId ?? undefined}
 				/>
