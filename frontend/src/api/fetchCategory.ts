@@ -1,15 +1,15 @@
 import { PREFIX } from '../helpers/API';
 
-export async function createCategory(category_name:string) {
+export async function createCategory(name:string) {
 	try {
-		console.log('Sending event data:', category_name);
+		console.log('Sending event data:', name);
 
 		const response = await fetch(`${PREFIX}events/categories`, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
 			},
-			body: JSON.stringify(category_name),
+			body: JSON.stringify({ name }), 
 		});
   
 		if (!response.ok) {
@@ -24,16 +24,16 @@ export async function createCategory(category_name:string) {
 	}
 }
 
-export const updateCategory = async (updatedCategory: { category_name: string}) => {
+export const updateCategory = async (updatedCategory: { name: string}) => {
 	try {
 
-		const response = await fetch(`${PREFIX}events/${updatedCategory.category_name}/favorite`, {
+		const response = await fetch(`${PREFIX}events/${updatedCategory.name}/favorite`, {
 			method: 'PUT',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				category_name: updatedCategory.category_name
+				name: updatedCategory.name
 			}),
 		});
 
@@ -45,21 +45,14 @@ export const updateCategory = async (updatedCategory: { category_name: string}) 
 	}
 };
 
-export const deleteEvent = async (category_name: string) => {
-	try {
-		const response = await fetch(`${PREFIX}events/${category_name}`, {
-			method: 'DELETE',
-		});
-
-		if (!response.ok) {
-			throw new Error('Ошибка при удалении события');
-		}
-
-		return await response.json();
-	} catch (error) {
-		console.error('Ошибка при удалении события:', error);
-		throw error;
+export const deleteCategory = async (category: string) => {
+	const response = await fetch(`${PREFIX}events/categories/${category}`, {
+		method: 'DELETE',
+	});
+  
+	if (!response.ok) {
+		throw new Error('Ошибка при удалении категории');
 	}
+  
+	return await response.json();
 };
-
-
