@@ -26,6 +26,7 @@ export function ReportsPage() {
 	const [reportData, setReportData] = useState<EventData[]>([]);  
 	const [loading, setLoading] = useState(false); 
 	const [error, setError] = useState<string | null>(null);  
+	const [noData, setNoData] = useState(false); 
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -72,6 +73,7 @@ export function ReportsPage() {
 
 		setLoading(true);
 		setError(null);
+		setNoData(false); 
 		try {
 			let url = '';
 			if (activeTab === 'period') {
@@ -82,9 +84,12 @@ export function ReportsPage() {
 
 			const response = await axios.get(url);
 			setReportData(response.data);
+
+			if (response.data.length === 0) {
+				setNoData(true);
+			}
 		} catch (error: unknown) {
 			if (axios.isAxiosError(error)) {
-
 				setError('Ошибка при получении данных');
 				if (error.response?.status === 500) {
 					setError('Мероприятий за выбранный период нет');
@@ -98,8 +103,6 @@ export function ReportsPage() {
 		}
 	};
 
-	
-
 	return (
 		<div className="flex h-[85vh] flex-col items-center justify-center overflow-x-scroll">
 			<div className="h-[400px] w-full max-w-md">
@@ -112,13 +115,13 @@ export function ReportsPage() {
 						className={`m-1 w-1/2 rounded-lg px-5 py-2 text-xl ${activeTab === 'period' ? 'bg-[#0A0A0A]' : 'bg-[#272727]'}`}
 						onClick={() => setActiveTab('period')}
 					>
-            За период
+						За период
 					</button>
 					<button
 						className={`m-1 w-1/2 translate-x-[-4px] rounded-lg px-5 py-2 text-xl ${activeTab === 'category' ? 'bg-[#0A0A0A]' : 'bg-[#272727]'}`}
 						onClick={() => setActiveTab('category')}
 					>
-            По категориям
+						По категориям
 					</button>
 				</div>
 
@@ -180,11 +183,17 @@ export function ReportsPage() {
 					</div>
 				</form>
 			</div>
+
 			{loading && <p>Загрузка...</p>} 
-			{error && <p className="text-[red-500]">'Мероприятий за выбранный период нет'</p>}
+			{error && <p className="text-[red-500]">Ошибка при получении данных</p>}
+
+			{!loading && noData && !error && (
+				<p className="text-center text-[gray-500]">Нет данных по выбранным параметрам</p>
+			)}
+
 			{reportData.length > 0 && (
 				<div className="mt-14 overflow-x-auto">
-					<table className=" min-w-full table-auto rounded-lg bg-[#272727] shadow-lg">
+					<table className="min-w-full table-auto rounded-lg bg-[#272727] shadow-lg">
 						<thead className="bg-[#0A0A0A] text-[gray-300]">
 							<tr>
 								<th className="px-4 py-2 text-left">Имя пользователя</th>
