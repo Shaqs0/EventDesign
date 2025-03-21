@@ -26,16 +26,26 @@ const getReportByPeriod: RequestHandler = async (req, res) => {
 
   if (!startDate || !endDate) {
     res.status(400).json({ message: "Start date and end date are required" });
-    return; 
+    return;
   }
 
   try {
     const events = await eventsService.getEventsByPeriod(startDate as string, endDate as string);
-    res.status(200).json(events);
+    const report = events.map(event => ({
+      user_name: event.Favorites?.[0]?.User?.user_name || "Unknown",
+      event_name: event.event_name,
+      category: event.category?.category_name || "No category",
+      event_date: event.event_date,
+      location: event.location,
+      description: event.description,
+      favorite: event.favorite ? "Yes" : "No",
+    }));
+    res.status(200).json(report);
   } catch (err) {
     res.status(500).json({ message: "Error generating report", error: err });
   }
 };
+
 
 const updateEventFavorite: RequestHandler = async (req, res) => {
   const { id } = req.params;
@@ -68,7 +78,15 @@ const getReportByCategory: RequestHandler = async (req, res) => {
 
   try {
     const events = await eventsService.getEventsByCategory(categoryName as string);
-    res.status(200).json(events);
+    const report = events.map(event => ({
+      user_name: event.Favorites?.[0]?.User?.user_name || "Unknown",
+      event_name: event.event_name,
+      event_date: event.event_date,
+      location: event.location,
+      description: event.description,
+      favorite: event.favorite ? "Yes" : "No",
+    }));
+    res.status(200).json(report);
   } catch (err) {
     res.status(500).json({ message: "Error generating report", error: err });
   }

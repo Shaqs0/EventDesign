@@ -43,7 +43,17 @@ export class designEvService {
           lte: new Date(endDate),
         },
       },
-      include: {
+      select: {
+        event_name: true,
+        event_date: true,
+        location: true,
+        description: true,
+        favorite: true,
+        category: {
+          select: {
+            category_name: true,
+          },
+        },
         Favorites: {
           select: {
             User: {
@@ -53,17 +63,26 @@ export class designEvService {
             },
           },
         },
-        category: true,
       },
     });
   }
-
+  
   async getEventsByCategory(categoryName: string) {
     return await prisma.event.findMany({
       where: {
         category_name: categoryName,
       },
-      include: {
+      select: {
+        event_name: true,
+        event_date: true,
+        location: true,
+        description: true,
+        favorite: true,
+        category: {
+          select: {
+            category_name: true,
+          },
+        },
         Favorites: {
           select: {
             User: {
@@ -73,10 +92,10 @@ export class designEvService {
             },
           },
         },
-        category: true,
       },
     });
   }
+  
 
   async createCategory(name: string) {
     const existingCategory = await prisma.category.findUnique({

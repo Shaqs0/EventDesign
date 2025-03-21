@@ -8,11 +8,24 @@ interface Category {
   category_name: string;
 }
 
+interface EventData {
+  user_name: string;
+  event_name: string;
+  category: string;
+  event_date: string;
+  location: string;
+  description: string;
+  favorite: string;
+}
+
 export function ReportsPage() {
 	const [activeTab, setActiveTab] = useState<'period' | 'category'>('period');
 	const [categories, setCategories] = useState<Category[]>([]);
-	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const [category, setCategory] = useState('');
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [reportData, setReportData] = useState<EventData[]>([]);  
+	const [loading, setLoading] = useState(false); 
+	const [error, setError] = useState<string | null>(null);  
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -44,39 +57,41 @@ export function ReportsPage() {
 		handleSubmit,
 		formState: { errors },
 		setValue,
+		setError: setFormError,
 	} = useForm();
 
 	const onSubmit = async (data: any) => {
+		if (new Date(data.startDate) > new Date(data.endDate)) {
+			setFormError('startDate', {
+				type: 'manual',
+				message: 'Дата начала не может быть позже даты окончания',
+			});
+			return;
+		}
+
+		setLoading(true);
+		setError(null);
 		try {
 			let url = '';
-			let payload = {};
-
 			if (activeTab === 'period') {
-				url = `${PREFIX}events/reports/by-period`;
-				payload = {
-					startDate: data.startDate,
-					endDate: data.endDate,
-				};
+				url = `${PREFIX}events/reports/by-period?startDate=${data.startDate}&endDate=${data.endDate}`;
 			} else if (activeTab === 'category') {
-				url = `${PREFIX}events/reports/by-category`;
-				payload = { category };
+				url = `${PREFIX}events/reports/by-category?categoryName=${category}`;
 			}
 
-			const response = await axios.post(url, payload, {
-				headers: {
-					'Content-Type': 'application/json',
-				},
-			});
-
-			console.log('Результат:', response.data);
+			const response = await axios.get(url);
+			setReportData(response.data);  
 		} catch (error) {
+			setError('Ошибка при получении данных');
 			console.error('Ошибка отправки данных:', error);
+		} finally {
+			setLoading(false);
 		}
 	};
 
 	return (
-		<div className="flex h-[85vh] items-center justify-center">
-			<div className="h-3/4 w-full max-w-md">
+		<div className="flex h-[85vh] flex-col items-center justify-center overflow-x-scroll">
+			<div className="h-[400px] w-full max-w-md">
 				<div className="flex justify-center">
 					<p className="text-center text-[32px] font-bold">Отчеты</p>
 				</div>
@@ -154,6 +169,38 @@ export function ReportsPage() {
 					</div>
 				</form>
 			</div>
+			{loading && <p>Загрузка...</p>} 
+			{error && <p className="text-[red-500]">{error}</p>}
+			{reportData.length > 0 && (
+				<div className="mt-14 overflow-x-auto">
+					<table className=" min-w-full table-auto rounded-lg bg-[#272727] shadow-lg">
+						<thead className="bg-[#0A0A0A] text-[gray-300]">
+							<tr>
+								<th className="px-4 py-2 text-left">Имя пользователя</th>
+								<th className="px-4 py-2 text-left">Название мероприятия</th>
+								<th className="px-4 py-2 text-left">Категория</th>
+								<th className="px-4 py-2 text-left">Дата</th>
+								<th className="px-4 py-2 text-left">Место</th>
+								<th className="px-4 py-2 text-left">Описание</th>
+								<th className="px-4 py-2 text-left">Избранное</th>
+							</tr>
+						</thead>
+						<tbody>
+							{reportData.map((event, index) => (
+								<tr key={index} className={`hover:bg-[#333333] ${index % 2 === 0 ? 'bg-[#3A3A3A]' : 'bg-[#272727]'}`}>
+									<td className="px-4 py-2">{event.user_name}</td>
+									<td className="px-4 py-2">{event.event_name}</td>
+									<td className="px-4 py-2">{event.category}</td>
+									<td className="px-4 py-2">{new Date(event.event_date).toLocaleDateString()}</td>
+									<td className="px-4 py-2">{event.location}</td>
+									<td className="px-4 py-2">{event.description}</td>
+									<td className="px-4 py-2 text-center">{event.favorite}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</div>
+			)}
 		</div>
 	);
 }
