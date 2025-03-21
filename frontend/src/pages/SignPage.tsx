@@ -44,21 +44,21 @@ export function SignPage() {
 	};
 
 	return (
-		<div className="flex min-h-screen items-center justify-center">
+		<div className="flex min-h-screen items-center justify-center dark:text-[black]">
 			<div className="h-[650px] w-full max-w-md">
 				<div className="flex justify-center gap-4">
 					<img src={LogoWhite} alt="Logo" />
 					<p className="text-center text-3xl font-medium">EventDesign</p>
 				</div>
-				<div className="mt-16 flex justify-center space-x-4 rounded-lg bg-[#272727]">
+				<div className="mt-16 flex justify-center space-x-4 rounded-lg bg-[#272727] dark:bg-[#EFEFEF]">
 					<button
-						className={`m-1 w-1/2 rounded-lg px-5 py-2 ${isSignIn ? 'bg-[#0A0A0A]' : 'bg-[gray-100]'}`}
+						className={`m-1 w-1/2 rounded-lg px-5 py-2 ${isSignIn ? 'bg-[#0A0A0A] dark:bg-[#ffffff]' : 'bg-[#272727] dark:bg-[#EFEFEF]'}`}
 						onClick={() => setIsSignIn(true)}
 					>
             Войти
 					</button>
 					<button
-						className={`m-1 w-1/2 -translate-x-1 rounded-lg px-5 py-2 ${!isSignIn ? 'bg-[#0A0A0A]' : 'bg-[#272727]'}`}
+						className={`m-1 w-1/2 -translate-x-1 rounded-lg px-5 py-2 ${!isSignIn ? 'bg-[#0A0A0A] dark:bg-[#ffffff]' : 'bg-[#272727] dark:bg-[#EFEFEF]'}`}
 						onClick={() => setIsSignIn(false)}
 					>
             Зарегистрироваться
@@ -71,7 +71,7 @@ export function SignPage() {
 							<div className="relative">
 								<input
 									type="text"
-									className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+									className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 									{...register('user_name', { required: 'Имя обязательно' })} 
 									placeholder="Имя"
 									autoComplete="off"
@@ -81,7 +81,7 @@ export function SignPage() {
 							<div className="relative">
 								<input
 									type="email"
-									className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+									className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 									{...register('email', { required: 'Email обязателен' })}
 									placeholder="Email"
 									autoComplete="username"
@@ -94,7 +94,7 @@ export function SignPage() {
 					<div className="relative">
 						<input
 							type="text"
-							className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+							className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]" 
 							{...register('login', { required: 'Логин обязателен' })}
 							placeholder="Логин"
 							autoComplete="off"
@@ -104,7 +104,7 @@ export function SignPage() {
 					<div className="relative">
 						<input
 							type="password"
-							className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+							className="peer mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 							{...register('password', {
 								required: 'Пароль обязателен',
 								minLength: {
@@ -124,7 +124,7 @@ export function SignPage() {
 					<div>
 						<button
 							type="submit"
-							className="mt-8 w-full rounded-lg bg-primary-blue py-2 font-bold text-[white] hover:bg-[gray-800]"
+							className="mt-8 w-full rounded-lg bg-primary-blue py-2 font-bold text-[white] hover:bg-[gray-800] dark:bg-[black]"
 						>
 							{isSignIn ? 'Войти' : 'Зарегистрироваться'}
 						</button>

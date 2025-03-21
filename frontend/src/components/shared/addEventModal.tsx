@@ -76,9 +76,9 @@ export function AddEventModal({
 	};
 
 	return (
-		<div>
-			<div className="fixed inset-0 z-50 flex w-full items-center justify-center bg-[black] bg-opacity-[75%]">
-				<div className="max-w-[600px] rounded-md bg-primary-grey p-6">
+		<div className=' '>
+			<div className="fixed inset-0 z-50 flex w-full items-center justify-center bg-[black] bg-opacity-[75%] dark:bg-[white] dark:bg-opacity-[50%]">
+				<div className="max-w-[600px] rounded-md bg-primary-grey p-6 dark:bg-[#f0f0f0]">
 					<p className="text-[33px]">{eventId ? 'Редактирование мероприятия' : 'Добавление мероприятия'}</p>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className="mb-4 mt-10">
@@ -91,7 +91,7 @@ export function AddEventModal({
 									<input
 										type="text"
 										{...field}
-										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 										placeholder="Имя"
 									/>
 								)}
@@ -109,7 +109,7 @@ export function AddEventModal({
 									<input
 										type="text"
 										{...field}
-										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 										placeholder="Название"
 									/>
 								)}
@@ -127,7 +127,7 @@ export function AddEventModal({
 									<input
 										type="date"
 										{...field}
-										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 									/>
 								)}
 							/>
@@ -144,7 +144,7 @@ export function AddEventModal({
 									<input
 										type="text"
 										{...field}
-										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+										className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 										placeholder="Место"
 									/>
 								)}
@@ -154,13 +154,13 @@ export function AddEventModal({
 
 						<div className="relative mb-4" ref={dropdownRef}>
 							<div
-								className="peer mt-2 flex w-full cursor-pointer items-start border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+								className="peer mt-2 flex w-full cursor-pointer items-start border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0 dark:bg-[white]"
 								onClick={() => setDropdownOpen(!dropdownOpen)}
 							>
 								{category || 'Выберите категорию'}
 							</div>
 							{dropdownOpen && (
-								<div className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto bg-primary-grey shadow-lg">
+								<div className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto bg-primary-grey shadow-lg dark:bg-[white]">
 									{categories.map((categoryItem) => (
 										<div
 											key={categoryItem.category_name}
@@ -189,7 +189,7 @@ export function AddEventModal({
 								render={({ field }) => (
 									<textarea
 										{...field}
-										className="peer mt-2 h-[15vh] w-full resize-none rounded-lg bg-primary-grey p-2 text-[white] outline-none focus:border-none"
+										className="peer mt-2 h-[15vh] w-full resize-none rounded-lg bg-primary-grey p-2 text-[white] outline-none focus:border-none dark:bg-[white] dark:text-[black]"
 										placeholder="Добавьте описание события..."
 									/>
 								)}
@@ -203,7 +203,7 @@ export function AddEventModal({
 									type="button"
 									onClick={() => setIsFavorite(true)}
 									className={`mr-2 rounded px-4 py-2 ${
-										isFavorite ? 'relative after:absolute after:bottom-[3px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff]' : ''
+										isFavorite ? 'relative after:absolute after:bottom-[3px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff] dark:after:bg-[#000000] ' : ''
 									} `}
 								>
       Да
@@ -212,7 +212,7 @@ export function AddEventModal({
 									type="button"
 									onClick={() => setIsFavorite(false)}
 									className={`rounded px-4 py-2 ${
-										!isFavorite ? 'relative after:absolute after:bottom-[3px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff]' : ''
+										!isFavorite ? 'relative after:absolute after:bottom-[3px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff] dark:after:bg-[#000000]' : ''
 									} `}
 								>
       Нет
@@ -231,7 +231,7 @@ export function AddEventModal({
 							<button
 								type="button"
 								onClick={onClose}
-								className="rounded bg-[gray-500] px-4 py-2 text-[white] hover:bg-[gray-600]"
+								className="rounded bg-[gray-500] px-4 py-2 text-[white] hover:bg-[gray-600] dark:text-[black]"
 							>
 								Закрыть
 							</button>

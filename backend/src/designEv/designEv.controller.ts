@@ -32,13 +32,13 @@ const getReportByPeriod: RequestHandler = async (req, res) => {
   try {
     const events = await eventsService.getEventsByPeriod(startDate as string, endDate as string);
     const report = events.map(event => ({
-      user_name: event.Favorites?.[0]?.User?.user_name || "Unknown",
+      user_name: event.Favorites?.[0]?.User?.user_name || "Неизвестно",
       event_name: event.event_name,
-      category: event.category?.category_name || "No category",
+      category: event.category?.category_name || "Нет категории",
       event_date: event.event_date,
       location: event.location,
       description: event.description,
-      favorite: event.favorite ? "Yes" : "No",
+      favorite: event.favorite ? "Да" : "Нет",
     }));
     res.status(200).json(report);
   } catch (err) {
@@ -79,12 +79,12 @@ const getReportByCategory: RequestHandler = async (req, res) => {
   try {
     const events = await eventsService.getEventsByCategory(categoryName as string);
     const report = events.map(event => ({
-      user_name: event.Favorites?.[0]?.User?.user_name || "Unknown",
+      user_name: event.Favorites?.[0]?.User?.user_name || "Неизвестно",
       event_name: event.event_name,
       event_date: event.event_date,
       location: event.location,
       description: event.description,
-      favorite: event.favorite ? "Yes" : "No",
+      favorite: event.favorite ? "Да" : "Нет",
     }));
     res.status(200).json(report);
   } catch (err) {

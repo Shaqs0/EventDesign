@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CalendarIcon, LocationIcon, PlusIcon, StarNFill, StartFill } from '../assets';
+import { CalendarIcon, LightCalendar, LocationIcon, Plus_n, PlusIcon, StarNFill, StartFill  } from '../assets';
 import { AddEventModal, Button, CardButton, CategoryDropdown } from '../components';
 import { Event } from '../interfaces/event.interface';
 import { fetchEvents } from '../api/events';
@@ -13,7 +13,7 @@ export function EventsPage() {
 	const [reloadEvents, setReloadEvents] = useState(false); 
 	const [selectedCategory, setSelectedCategory] = useState<string>('');
 
-
+	const isLightTheme = localStorage.getItem('theme') === 'dark';
 
 	useEffect(() => {
 		const loadEvents = async () => {
@@ -22,17 +22,16 @@ export function EventsPage() {
 				...event,
 				category: event.category_name ? { category_name: event.category_name } : { category_name: '' },
 			}));
-	
+
 			const filteredEvents = selectedCategory
 				? formattedEvents.filter(event => event.category.category_name === selectedCategory)
 				: formattedEvents;
-	
+
 			setEvents(filteredEvents);
 		};
-	
+
 		loadEvents();
 	}, [reloadEvents, selectedCategory]);
-	
 
 	const activeEvent = events.find((event) => event.event_id === activeEventId);
 
@@ -42,7 +41,6 @@ export function EventsPage() {
 				event.event_id === updatedEvent.event_id ? { ...event, ...updatedEvent } : event
 			)
 		);
-
 		setReloadEvents((prev) => !prev); 
 	};
 
@@ -89,23 +87,22 @@ export function EventsPage() {
 	};
 
 	return (
-		<div>
+		<div className='dark:text-[black]'>
 			<div className="mt-10 flex w-full items-center justify-start gap-4 px-5">
 				<CategoryDropdown 
 					selectedCategory={selectedCategory} 
 					onSelect={setSelectedCategory} 
 					onCategoryUpdate={handleCategoryChange} 
 				/>
-
 			</div>
 
 			<div className="flex min-h-[80vh] w-full overflow-x-hidden">
 				<aside className="mt-20 h-[650px] w-96 min-w-96 shrink-0 overflow-y-scroll pl-2 pr-1">
 					<button
-						className="flex h-[57px] w-full cursor-pointer items-center justify-center gap-3 bg-[white] bg-opacity-[3%] p-[10px]"
+						className="flex h-[57px] w-full cursor-pointer items-center justify-center gap-3 bg-[white] bg-opacity-[3%] p-[10px] dark:bg-[#EFEFEF]"
 						onClick={() => setIsModalOpen(true)}
 					>
-						<img src={PlusIcon} alt="Добавить событие" />
+						<img src={isLightTheme ? Plus_n : PlusIcon} alt="Добавить событие" />
 						<p className="font-semibold">Новое мероприятие</p>
 					</button>
 					<div className="mt-14 flex flex-col gap-5">
@@ -137,18 +134,18 @@ export function EventsPage() {
 
 							<div className="flex w-full flex-col items-center justify-start p-10 px-20">
 								<div className="w-full justify-start rounded-lg p-4">
-									<div className="flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
-										<img src={CalendarIcon} className="size-[18px]" alt="Дата" />
+									<div className="flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4 dark:border-[black]">
+										<img src={isLightTheme ? LightCalendar : CalendarIcon} className="size-[18px]" alt="Дата" />
 										<span className="pl-2">Дата:</span>
 										<span className="pl-4 font-semibold">{new Date(activeEvent.event_date).toLocaleDateString('ru-RU')}</span>
 									</div>
-									<div className="mt-10 flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4">
+									<div className="mt-10 flex w-full items-center space-x-2 border-b border-[white] border-opacity-[10%] pb-4 dark:border-[black]">
 										<img src={LocationIcon} className="size-[18px]" alt="Место" />
 										<span className="pl-2">Место проведения:</span>
 										<span className="pl-4 font-semibold">{activeEvent.location}</span>
 									</div>
 									<div className="mt-10">
-										<div className="h-[30vh] max-h-[400px] max-w-[90vw] overflow-y-auto overflow-x-hidden rounded-lg bg-primary-grey p-2 text-[white]" style={{ wordBreak: 'break-word' }}>
+										<div className="h-[30vh] max-h-[400px] max-w-[90vw] overflow-y-auto overflow-x-hidden rounded-lg bg-primary-grey p-2 text-[white] dark:bg-[white] dark:text-[black]" style={{ wordBreak: 'break-word' }}>
 											{activeEvent.description ? (
 												<p className="break-words text-sm md:text-base">{activeEvent.description}</p>
 											) : (

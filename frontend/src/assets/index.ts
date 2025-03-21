@@ -7,3 +7,7 @@ export {default as StarNFill} from './star_n_fill.svg';
 export {default as StartFill} from './star_fill.svg';
 export {default as LightMode} from './lightMode.svg';
 export {default as NightMode} from './darkMode.svg';
+export {default as Plus_n} from './Plus_n.svg';
+export {default as star_fill_dark} from './star_fill_dark.svg';
+export {default as start_filled} from './star_filled_dark.svg';
+export {default as LightCalendar} from './l_calendar.svg';

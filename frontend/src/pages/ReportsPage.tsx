@@ -104,21 +104,21 @@ export function ReportsPage() {
 	};
 
 	return (
-		<div className="flex h-[85vh] flex-col items-center justify-center overflow-x-scroll">
+		<div className="flex h-[85vh] flex-col items-center justify-center overflow-x-scroll dark:text-[black]">
 			<div className="h-[400px] w-full max-w-md">
 				<div className="flex justify-center">
 					<p className="text-center text-[32px] font-bold">Отчеты</p>
 				</div>
 
-				<div className="mt-8 flex justify-center space-x-4 rounded-lg bg-[#272727]">
+				<div className="mt-8 flex justify-center space-x-4 rounded-lg bg-[#272727] dark:bg-[#EFEFEF]">
 					<button
-						className={`m-1 w-1/2 rounded-lg px-5 py-2 text-xl ${activeTab === 'period' ? 'bg-[#0A0A0A]' : 'bg-[#272727]'}`}
+						className={`m-1 w-1/2 rounded-lg px-5 py-2 text-xl dark:text-[black] ${activeTab === 'period' ? 'bg-[#0A0A0A] dark:bg-[#ffffff]' : 'bg-[#272727] dark:bg-[#EFEFEF]'}`}
 						onClick={() => setActiveTab('period')}
 					>
 						За период
 					</button>
 					<button
-						className={`m-1 w-1/2 translate-x-[-4px] rounded-lg px-5 py-2 text-xl ${activeTab === 'category' ? 'bg-[#0A0A0A]' : 'bg-[#272727]'}`}
+						className={`m-1 w-1/2 translate-x-[-4px] rounded-lg px-5 py-2 text-xl ${activeTab === 'category' ? 'bg-[#0A0A0A] dark:bg-[#ffffff]' : 'bg-[#272727] dark:bg-[#EFEFEF]'}`}
 						onClick={() => setActiveTab('category')}
 					>
 						По категориям
@@ -131,14 +131,14 @@ export function ReportsPage() {
 							<label className="block text-sm font-medium text-[gray-400]">Период</label>
 							<input
 								type="date"
-								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none"
+								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none dark:bg-[#ffffff]"
 								{...register('startDate', { required: 'Дата начала обязательна' })}
 								placeholder="Дата начала"
 							/>
 							{errors.startDate && <p className="mt-1 text-sm text-[red-500]">{(errors.startDate as FieldError).message}</p>}
 							<input
 								type="date"
-								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none"
+								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none dark:bg-[#ffffff]"
 								{...register('endDate', { required: 'Дата окончания обязательна' })}
 								placeholder="Дата окончания"
 							/>
@@ -150,13 +150,13 @@ export function ReportsPage() {
 						<div className="relative" ref={dropdownRef}>
 							<label className="block text-sm font-medium text-[gray-400]">Категория</label>
 							<div
-								className="mt-2 w-full cursor-pointer border-b border-[#3D3D3D] bg-primary-grey p-2"
+								className="mt-2 w-full cursor-pointer border-b border-[#3D3D3D] bg-primary-grey p-2 dark:bg-[#ffffff]"
 								onClick={() => setDropdownOpen(!dropdownOpen)}
 							>
 								{category || 'Выберите категорию'}
 							</div>
 							{dropdownOpen && (
-								<div className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto bg-primary-grey shadow-lg">
+								<div className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto bg-primary-grey shadow-lg dark:bg-[#ffffff]">
 									{categories.map((categoryItem) => (
 										<div
 											key={categoryItem.category_name}
@@ -193,12 +193,14 @@ export function ReportsPage() {
 
 			{reportData.length > 0 && (
 				<div className="mt-14 overflow-x-auto">
-					<table className="min-w-full table-auto rounded-lg bg-[#272727] shadow-lg">
-						<thead className="bg-[#0A0A0A] text-[gray-300]">
+					<table className="min-w-full table-auto rounded-lg bg-[#272727] shadow-lg dark:bg-[#c9c9c9]">
+						<thead className="bg-[#0A0A0A] text-[gray-300] dark:bg-[#c9c9c9]">
 							<tr>
 								<th className="px-4 py-2 text-left">Имя пользователя</th>
 								<th className="px-4 py-2 text-left">Название мероприятия</th>
-								<th className="px-4 py-2 text-left">Категория</th>
+								{activeTab === 'period' && (
+									<th className="px-4 py-2 text-left">Категория</th>
+								)}
 								<th className="px-4 py-2 text-left">Дата</th>
 								<th className="px-4 py-2 text-left">Место</th>
 								<th className="px-4 py-2 text-left">Описание</th>
@@ -207,10 +209,12 @@ export function ReportsPage() {
 						</thead>
 						<tbody>
 							{reportData.map((event, index) => (
-								<tr key={index} className={`hover:bg-[#333333] ${index % 2 === 0 ? 'bg-[#3A3A3A]' : 'bg-[#272727]'}`}>
+								<tr key={index} className={`hover:bg-[#333333] ${index % 2 === 0 ? 'bg-[#3A3A3A] dark:bg-[#ffffff]' : 'bg-[#272727] dark:bg-[#ececec]'}`}>
 									<td className="px-4 py-2">{event.user_name}</td>
 									<td className="px-4 py-2">{event.event_name}</td>
-									<td className="px-4 py-2">{event.category}</td>
+									{activeTab === 'period' && (
+										<td className="px-4 py-2">{event.category}</td>
+									)}
 									<td className="px-4 py-2">{new Date(event.event_date).toLocaleDateString()}</td>
 									<td className="px-4 py-2">{event.location}</td>
 									<td className="px-4 py-2">{event.description}</td>

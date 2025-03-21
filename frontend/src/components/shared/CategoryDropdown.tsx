@@ -4,8 +4,7 @@ import { createCategory, updateCategory, deleteCategory } from '../../api/fetchC
 
 interface Category {
 	category_name: string;
-  }
-  
+}
 
 export function CategoryDropdown({
 	selectedCategory,
@@ -79,7 +78,7 @@ export function CategoryDropdown({
 	return (
 		<div className="flex w-[1200px] flex-row items-center justify-center gap-8">
 			<select
-				className="w-[220px] rounded border border-[#94948a] bg-primary-grey p-2"
+				className="w-[220px] rounded border border-[#94948a] bg-primary-grey p-2 dark:bg-[white]"
 				value={selectedCategory || ''}
 				onChange={(e) => onSelect(e.target.value)}
 			>
@@ -94,7 +93,7 @@ export function CategoryDropdown({
 			<div className="flex flex-row">
 				<input
 					type="text"
-					className="w-[200px] rounded border border-[#94948a] bg-primary-grey p-2"
+					className="w-[200px] rounded border border-[#94948a] bg-primary-grey p-2 text-[black] dark:bg-[white] dark:text-[black]"
 					placeholder="Новая категория"
 					value={newCategory}
 					onChange={(e) => setNewCategory(e.target.value)}
@@ -105,7 +104,7 @@ export function CategoryDropdown({
 				<div className="flex gap-2">
 					<input
 						type="text"
-						className="w-[200px] rounded border border-[#94948a]  bg-primary-grey p-2"
+						className="w-[200px] rounded border border-[#94948a]  bg-primary-grey p-2 dark:bg-[white] dark:text-[black]"
 						value={editCategory}
 						onChange={(e) => setEditCategory(e.target.value)}
 					/>
