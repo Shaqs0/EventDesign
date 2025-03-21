@@ -1,9 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../components';
+import { PREFIX } from '../helpers/API';
+
+interface Category {
+	category_name: string;
+}
 
 export function ReportsPage() {
 	const [activeTab, setActiveTab] = useState<'period' | 'category'>('period');
+	const [categories, setCategories] = useState<Category[]>([]);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const [category, setCategory] = useState('');
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	
+	useEffect(() => {
+		async function fetchCategories() {
+			try {
+				const response = await fetch(`${PREFIX}events/categories`);
+				if (!response.ok) {
+					throw new Error('Ошибка загрузки категорий');
+				}
+				const fetchedCategories = await response.json();
+				setCategories(fetchedCategories);
+			} catch (error) {
+				console.error('Ошибка API:', error);
+			}
+		}
+		fetchCategories();
+	}, []);
+	
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (!dropdownRef.current?.contains(event.target as Node)) {
+				setDropdownOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 	const {
 		register,
 		handleSubmit,
@@ -78,17 +115,32 @@ export function ReportsPage() {
 					</div>
 
 					{activeTab === 'category' && (
-						<div className="relative">
-							<select
-								className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
-								{...register('category', { required: 'Выберите категорию' })}
+						<div className="relative mb-4" ref={dropdownRef}>
+							<div
+								className="peer mt-2 flex w-full cursor-pointer items-start border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+								onClick={() => setDropdownOpen(!dropdownOpen)}
 							>
-								<option value="">Выберите категорию</option>
-								<option value="финансы">Финансы</option>
-								<option value="продажи">Продажи</option>
-								<option value="маркетинг">Маркетинг</option>
-							</select>
-							{errors.category && <p className="mt-1 text-sm text-[red-500]">{String(errors.category.message)}</p>}
+								{category || 'Выберите категорию'}
+							</div>
+							{dropdownOpen && (
+								<div className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto bg-primary-grey shadow-lg">
+									{categories.map((categoryItem) => (
+										<div
+											key={categoryItem.category_name}
+											className={`cursor-pointer p-2 hover:bg-[gray-700] ${
+												category === categoryItem.category_name ? 'bg-[gray-600]' : ''
+											}`}
+											onClick={() => {
+												setCategory(categoryItem.category_name);
+												setDropdownOpen(false);
+											}}
+										>
+											{categoryItem.category_name}
+										</div>
+									))}
+								</div>
+							)}
+							{category === '' && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
 						</div>
 					)}
 

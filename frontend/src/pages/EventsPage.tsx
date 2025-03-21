@@ -63,6 +63,10 @@ export function EventsPage() {
 		);
 	};
 
+	const handleCardClick = (eventId: number) => {
+		setActiveEventId(eventId);
+	};
+
 	const handleDeleteEvent = async (eventId: number) => {
 		try {
 			await deleteEvent(eventId);

@@ -1,15 +1,57 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { Button } from '../ui/Button';
 import { Event } from '../../interfaces/event.interface';
 import { createEvent, updateEvent } from '../../api/fetchEvents'; 
+import { PREFIX } from '../../helpers/API';
 
-export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => void; onSave: (event: Event) => void; eventId?: string }) {
+interface Category {
+	category_name: string;
+}
+
+export function AddEventModal({
+	onClose,
+	onSave,
+	eventId,
+}: {
+	onClose: () => void;
+	onSave: (event: Event) => void;
+	eventId?: string;
+}) {
 	const { control, handleSubmit, formState: { errors }} = useForm<Event>();
 	const [category, setCategory] = useState('');
 	const [isFavorite, setIsFavorite] = useState(false);
+	const [categories, setCategories] = useState<Category[]>([]);
+	const [dropdownOpen, setDropdownOpen] = useState(false);
+	const dropdownRef = useRef<HTMLDivElement>(null);
 
+	useEffect(() => {
+		async function fetchCategories() {
+			try {
+				const response = await fetch(`${PREFIX}events/categories`);
+				if (!response.ok) {
+					throw new Error('Ошибка загрузки категорий');
+				}
+				const fetchedCategories = await response.json();
+				setCategories(fetchedCategories);
+			} catch (error) {
+				console.error('Ошибка API:', error);
+			}
+		}
+		fetchCategories();
+	}, []);
 
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (!dropdownRef.current?.contains(event.target as Node)) {
+				setDropdownOpen(false);
+			}
+		};
+		document.addEventListener('mousedown', handleClickOutside);
+		return () => {
+			document.removeEventListener('mousedown', handleClickOutside);
+		};
+	}, []);
 
 	const onSubmit: SubmitHandler<Event> = async (data) => {
 		try {
@@ -37,7 +79,7 @@ export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => voi
 		<div>
 			<div className="fixed inset-0 z-50 flex w-full items-center justify-center bg-[black] bg-opacity-[75%]">
 				<div className="max-w-[600px] rounded-md bg-primary-grey p-6">
-					<p className='text-[33px]'>{eventId ? 'Редактирование мероприятия' : 'Добавление мероприятия'}</p>
+					<p className="text-[33px]">{eventId ? 'Редактирование мероприятия' : 'Добавление мероприятия'}</p>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className="mb-4 mt-10">
 							<Controller
@@ -110,7 +152,36 @@ export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => voi
 							{errors.location && <p className="mt-1 text-sm text-[red-500]">{String(errors.location.message)}</p>}
 						</div>
 
-						<div className="mt-10">
+						<div className="relative mb-4" ref={dropdownRef}>
+							<div
+								className="peer mt-2 flex w-full cursor-pointer items-start border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+								onClick={() => setDropdownOpen(!dropdownOpen)}
+							>
+								{category || 'Выберите категорию'}
+							</div>
+							{dropdownOpen && (
+								<div className="absolute z-10 mt-2 max-h-32 w-full overflow-y-auto bg-primary-grey shadow-lg">
+									{categories.map((categoryItem) => (
+										<div
+											key={categoryItem.category_name}
+											className={`cursor-pointer p-2 hover:bg-[gray-700] ${
+												category === categoryItem.category_name ? 'bg-[gray-600]' : ''
+											}`}
+											onClick={() => {
+												setCategory(categoryItem.category_name);
+												setDropdownOpen(false);
+											}}
+										>
+											{categoryItem.category_name}
+										</div>
+									))}
+								</div>
+							)}
+							{category === '' && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
+						</div>
+
+
+						<div className="mb-4">
 							<Controller
 								name="description"
 								control={control}
@@ -123,21 +194,6 @@ export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => voi
 									/>
 								)}
 							/>
-							{errors.description && <p className="mt-1 text-sm text-[red-500]">{String(errors.description.message)}</p>}
-						</div>
-
-						<div className="mb-4">
-							<select
-								value={category}
-								onChange={(e) => setCategory(e.target.value)}
-								className="peer mt-2 flex w-full items-start border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
-							>
-								<option value="">Выберите категорию</option>
-								<option value="Культура">Культура</option>
-								<option value="Музыка">Музыка</option>
-								<option value="Наука">Наука</option>
-							</select>
-							{category === '' && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
 						</div>
 
 						<div className="mt-4">
@@ -146,23 +202,27 @@ export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => voi
 								<button
 									type="button"
 									onClick={() => setIsFavorite(true)}
-									className={`mr-2 rounded px-4 py-2 ${isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'} text-[white]`}
+									className={`mr-2 rounded px-4 py-2 ${
+										isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'
+									} text-[white]`}
 								>
-                  Да
+									Да
 								</button>
 								<button
 									type="button"
 									onClick={() => setIsFavorite(false)}
-									className={`rounded px-4 py-2 ${!isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'} text-[white]`}
+									className={`rounded px-4 py-2 ${
+										!isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'
+									} text-[white]`}
 								>
-                  Нет
+									Нет
 								</button>
 							</div>
 						</div>
 
 						<div className="mt-5 flex justify-between">
 							<Button
-								appearance='smallButton'
+								appearance="smallButton"
 								title={eventId ? 'Сохранить изменения' : 'Сохранить'}
 								className="rounded bg-[blue-500] px-4 py-2 text-[white] hover:bg-[blue-600]"
 							/>
@@ -171,7 +231,7 @@ export function AddEventModal({ onClose, onSave, eventId }: { onClose: () => voi
 								onClick={onClose}
 								className="rounded bg-[gray-500] px-4 py-2 text-[white] hover:bg-[gray-600]"
 							>
-                Закрыть
+								Закрыть
 							</button>
 						</div>
 					</form>
