@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import { Button } from '../components';
 import { PREFIX } from '../helpers/API';
 
@@ -17,10 +18,8 @@ export function ReportsPage() {
 	useEffect(() => {
 		async function fetchCategories() {
 			try {
-				const response = await fetch(`${PREFIX}events/categories`);
-				if (!response.ok) throw new Error('Ошибка загрузки категорий');
-				const fetchedCategories = await response.json();
-				setCategories(fetchedCategories);
+				const response = await axios.get(`${PREFIX}events/categories`);
+				setCategories(response.data);
 			} catch (error) {
 				console.error('Ошибка API:', error);
 			}
@@ -47,9 +46,32 @@ export function ReportsPage() {
 		setValue,
 	} = useForm();
 
-	const onSubmit = (data: any) => {
-		console.log('Данные формы:', { ...data, category });
+	const onSubmit = async (data: any) => {
+		try {
+			let url = '';
+			let payload = {};
 
+			if (activeTab === 'period') {
+				url = `${PREFIX}events/reports/by-period`;
+				payload = {
+					startDate: data.startDate,
+					endDate: data.endDate,
+				};
+			} else if (activeTab === 'category') {
+				url = `${PREFIX}events/reports/by-category`;
+				payload = { category };
+			}
+
+			const response = await axios.post(url, payload, {
+				headers: {
+					'Content-Type': 'application/json',
+				},
+			});
+
+			console.log('Результат:', response.data);
+		} catch (error) {
+			console.error('Ошибка отправки данных:', error);
+		}
 	};
 
 	return (
@@ -73,7 +95,6 @@ export function ReportsPage() {
             По категориям
 					</button>
 				</div>
-
 
 				<form className="mt-10 grow space-y-4" onSubmit={handleSubmit(onSubmit)}>
 					{activeTab === 'period' && (
