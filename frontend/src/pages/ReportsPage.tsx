@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldError, useForm } from 'react-hook-form';
 import axios from 'axios';
 import { Button } from '../components';
 import { PREFIX } from '../helpers/API';
@@ -60,6 +60,7 @@ export function ReportsPage() {
 		setError: setFormError,
 	} = useForm();
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const onSubmit = async (data: any) => {
 		if (new Date(data.startDate) > new Date(data.endDate)) {
 			setFormError('startDate', {
@@ -80,14 +81,24 @@ export function ReportsPage() {
 			}
 
 			const response = await axios.get(url);
-			setReportData(response.data);  
-		} catch (error) {
-			setError('Ошибка при получении данных');
+			setReportData(response.data);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+
+				setError('Ошибка при получении данных');
+				if (error.response?.status === 500) {
+					setError('Мероприятий за выбранный период нет');
+				}
+			} else {
+				setError('Неизвестная ошибка');
+			}
 			console.error('Ошибка отправки данных:', error);
 		} finally {
 			setLoading(false);
 		}
 	};
+
+	
 
 	return (
 		<div className="flex h-[85vh] flex-col items-center justify-center overflow-x-scroll">
@@ -121,14 +132,14 @@ export function ReportsPage() {
 								{...register('startDate', { required: 'Дата начала обязательна' })}
 								placeholder="Дата начала"
 							/>
-							{errors.startDate && <p className="mt-1 text-sm text-[red-500]">{errors.startDate.message}</p>}
+							{errors.startDate && <p className="mt-1 text-sm text-[red-500]">{(errors.startDate as FieldError).message}</p>}
 							<input
 								type="date"
 								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none"
 								{...register('endDate', { required: 'Дата окончания обязательна' })}
 								placeholder="Дата окончания"
 							/>
-							{errors.endDate && <p className="mt-1 text-sm text-[red-500]">{errors.endDate.message}</p>}
+							{errors.endDate && <p className="mt-1 text-sm text-[red-500]">{(errors.endDate as FieldError).message}</p>}
 						</div>
 					)}
 
@@ -170,7 +181,7 @@ export function ReportsPage() {
 				</form>
 			</div>
 			{loading && <p>Загрузка...</p>} 
-			{error && <p className="text-[red-500]">{error}</p>}
+			{error && <p className="text-[red-500]">'Мероприятий за выбранный период нет'</p>}
 			{reportData.length > 0 && (
 				<div className="mt-14 overflow-x-auto">
 					<table className=" min-w-full table-auto rounded-lg bg-[#272727] shadow-lg">

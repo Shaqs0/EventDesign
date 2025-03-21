@@ -189,7 +189,7 @@ export function AddEventModal({
 								render={({ field }) => (
 									<textarea
 										{...field}
-										className="peer mt-2 h-[30vh] w-full resize-none rounded-lg bg-primary-grey p-2 text-[white] outline-none focus:border-none"
+										className="peer mt-2 h-[15vh] w-full resize-none rounded-lg bg-primary-grey p-2 text-[white] outline-none focus:border-none"
 										placeholder="Добавьте описание события..."
 									/>
 								)}
@@ -203,22 +203,24 @@ export function AddEventModal({
 									type="button"
 									onClick={() => setIsFavorite(true)}
 									className={`mr-2 rounded px-4 py-2 ${
-										isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'
-									} text-[white]`}
+										isFavorite ? 'relative after:absolute after:bottom-[3px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff]' : ''
+									} `}
 								>
-									Да
+      Да
 								</button>
 								<button
 									type="button"
 									onClick={() => setIsFavorite(false)}
 									className={`rounded px-4 py-2 ${
-										!isFavorite ? 'bg-[blue-500]' : 'bg-[gray-500]'
-									} text-[white]`}
+										!isFavorite ? 'relative after:absolute after:bottom-[3px] after:left-0 after:h-[2px] after:w-full after:bg-[#ffffff]' : ''
+									} `}
 								>
-									Нет
+      Нет
 								</button>
 							</div>
 						</div>
+
+
 
 						<div className="mt-5 flex justify-between">
 							<Button
