@@ -4,7 +4,7 @@ import { Button } from '../components';
 import { PREFIX } from '../helpers/API';
 
 interface Category {
-	category_name: string;
+  category_name: string;
 }
 
 export function ReportsPage() {
@@ -13,14 +13,12 @@ export function ReportsPage() {
 	const [dropdownOpen, setDropdownOpen] = useState(false);
 	const [category, setCategory] = useState('');
 	const dropdownRef = useRef<HTMLDivElement>(null);
-	
+
 	useEffect(() => {
 		async function fetchCategories() {
 			try {
 				const response = await fetch(`${PREFIX}events/categories`);
-				if (!response.ok) {
-					throw new Error('Ошибка загрузки категорий');
-				}
+				if (!response.ok) throw new Error('Ошибка загрузки категорий');
 				const fetchedCategories = await response.json();
 				setCategories(fetchedCategories);
 			} catch (error) {
@@ -29,7 +27,7 @@ export function ReportsPage() {
 		}
 		fetchCategories();
 	}, []);
-	
+
 	useEffect(() => {
 		const handleClickOutside = (event: MouseEvent) => {
 			if (!dropdownRef.current?.contains(event.target as Node)) {
@@ -41,18 +39,21 @@ export function ReportsPage() {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, []);
+
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
+		setValue,
 	} = useForm();
 
 	const onSubmit = (data: any) => {
-		console.log('Форма отправлена:', data);
+		console.log('Данные формы:', { ...data, category });
+
 	};
 
 	return (
-		<div className="flex h-[85vh]  items-center justify-center">
+		<div className="flex h-[85vh] items-center justify-center">
 			<div className="h-3/4 w-full max-w-md">
 				<div className="flex justify-center">
 					<p className="text-center text-[32px] font-bold">Отчеты</p>
@@ -73,51 +74,33 @@ export function ReportsPage() {
 					</button>
 				</div>
 
+
 				<form className="mt-10 grow space-y-4" onSubmit={handleSubmit(onSubmit)}>
-					<div className="relative">
-						<input
-							type="text"
-							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
-							{...register('name', { required: 'Имя обязательно' })}
-							placeholder="Имя"
-						/>
-						{errors.name && <p className="mt-1 text-sm text-[red-500]">{String(errors.name.message)}</p>}
-					</div>
-
-					<div className="relative">
-						<input
-							type="text"
-							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
-							{...register('title', { required: 'Название обязательно' })}
-							placeholder="Название"
-						/>
-						{errors.title && <p className="mt-1 text-sm text-[red-500]">{String(errors.title.message)}</p>}
-					</div>
-
-					<div className="relative">
-						<input
-							type="text"
-							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
-							{...register('date', { required: 'Дата обязательна' })}
-							placeholder="Дата"
-						/>
-						{errors.date && <p className="mt-1 text-sm text-[red-500]">{String(errors.date.message)}</p>}
-					</div>
-
-					<div className="relative">
-						<input
-							type="text"
-							className="peer mt-2 w-full border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
-							{...register('location', { required: 'Место обязательно' })}
-							placeholder="Место"
-						/>
-						{errors.location && <p className="mt-1 text-sm text-[red-500]">{String(errors.location.message)}</p>}
-					</div>
+					{activeTab === 'period' && (
+						<div className="relative">
+							<label className="block text-sm font-medium text-[gray-400]">Период</label>
+							<input
+								type="date"
+								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none"
+								{...register('startDate', { required: 'Дата начала обязательна' })}
+								placeholder="Дата начала"
+							/>
+							{errors.startDate && <p className="mt-1 text-sm text-[red-500]">{errors.startDate.message}</p>}
+							<input
+								type="date"
+								className="mt-2 w-full border-b border-[#3D3D3D] bg-primary-grey p-2 focus:outline-none"
+								{...register('endDate', { required: 'Дата окончания обязательна' })}
+								placeholder="Дата окончания"
+							/>
+							{errors.endDate && <p className="mt-1 text-sm text-[red-500]">{errors.endDate.message}</p>}
+						</div>
+					)}
 
 					{activeTab === 'category' && (
-						<div className="relative mb-4" ref={dropdownRef}>
+						<div className="relative" ref={dropdownRef}>
+							<label className="block text-sm font-medium text-[gray-400]">Категория</label>
 							<div
-								className="peer mt-2 flex w-full cursor-pointer items-start border-b border-b-[#3D3D3D] bg-primary-grey p-2 focus:outline-none focus:ring-0"
+								className="mt-2 w-full cursor-pointer border-b border-[#3D3D3D] bg-primary-grey p-2"
 								onClick={() => setDropdownOpen(!dropdownOpen)}
 							>
 								{category || 'Выберите категорию'}
@@ -132,6 +115,7 @@ export function ReportsPage() {
 											}`}
 											onClick={() => {
 												setCategory(categoryItem.category_name);
+												setValue('category', categoryItem.category_name);
 												setDropdownOpen(false);
 											}}
 										>
@@ -140,15 +124,12 @@ export function ReportsPage() {
 									))}
 								</div>
 							)}
-							{category === '' && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
+							{errors.category && <p className="mt-1 text-sm text-[red-500]">Категория не выбрана</p>}
 						</div>
 					)}
 
-					<div className='pt-5'>
-						<Button
-							appearance='bigButton'
-							title='Сгенерировать отчет'
-						/>
+					<div className="pt-5">
+						<Button appearance="bigButton" title="Сгенерировать отчет" />
 					</div>
 				</form>
 			</div>
